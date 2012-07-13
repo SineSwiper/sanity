@@ -1,7 +1,7 @@
 ﻿package sanity;
 
 # VERSION
-# ABSTRACT: The ONLY personal pragma you'll ever need!
+# ABSTRACT: The ONLY meta pragma you'll ever need!
 
 # use feature has to be difficult...
 our $VER_PACK;
@@ -14,7 +14,7 @@ no strict 'refs';
 #use feature ($VER_PACK);
 use warnings FATAL => 'all';
 no warnings qw(uninitialized);
-use namespace::sweep;
+use namespace::sweep 0.004;
 
 # Need this for some of the bit math
 use bigint;            ### LAZY: I should probably be using Math::BigInt... ###
@@ -23,7 +23,7 @@ use sanity::BaseCalc;  ### FIXME: Temporary until Math::BaseCalc fix (RT #77198)
 use List::MoreUtils qw(any all none uniq);
 
 # Useful for importing modules, including stuff like Carp and its exports
-use Import::Into 1.1.0;
+use Import::Into v1.1.0;
 
 my $base90 = [0..9, 'A'..'Z', 'a'..'z', split(//, '#$%&()*+.,-/:;<=>?@[]^_`{|}~')];  # no !, ', ", or \
 my $base48900 = [  # PHEAR THIS!
@@ -802,7 +802,7 @@ words, you need a positive included before you can negate something.
 
 =head3 NO:* switches
 
-Some pragmas work by using the C<U<unimport>> function, so that the English makes sense.
+Some pragmas work by using the C<B<unimport>> function, so that the English makes sense.
 To keep that syntax, these pragmas are included with a C<NO:> prefix:
 
    use sanity 'NO:multidimensional';

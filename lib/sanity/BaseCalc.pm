@@ -1,6 +1,9 @@
 package  # hide from PAUSE
    sanity::BaseCalc;
 
+# VERSION
+# ABSTRACT: DO NOT USE!
+
 use strict;
 use Carp;
 use Math::BigInt;
@@ -184,10 +187,6 @@ sub to_base {
 
 1;
 __END__
-
-=head1 NAME
-
-sanity::BaseCalc - DO NOT USE!
 
 =head1 DESCRIPTION
 
