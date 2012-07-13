@@ -1,6 +1,7 @@
 ﻿package sanity;
 
-our $VERSION = '0.99_001';
+# VERSION
+# ABSTRACT: The ONLY personal pragma you'll ever need!
 
 # use feature has to be difficult...
 our $VER_PACK;
@@ -10,15 +11,19 @@ BEGIN { $VER_PACK = sprintf(":%vd", $^V); }
 use utf8;  # the BaseCalc 'numbers' are definitely UTF-8
 use strict qw(subs vars);
 no strict 'refs';
-use feature ($VER_PACK);
+#use feature ($VER_PACK);
 use warnings FATAL => 'all';
 no warnings qw(uninitialized);
+use namespace::sweep;
 
 # Need this for some of the bit math
-use bigint;
-use Math::BaseCalc;
+use bigint;            ### LAZY: I should probably be using Math::BigInt... ###
+use sanity::BaseCalc;  ### FIXME: Temporary until Math::BaseCalc fix (RT #77198) ###
 
-use List::MoreUtils qw(any none uniq);
+use List::MoreUtils qw(any all none uniq);
+
+# Useful for importing modules, including stuff like Carp and its exports
+use Import::Into 1.1.0;
 
 my $base90 = [0..9, 'A'..'Z', 'a'..'z', split(//, '#$%&()*+.,-/:;<=>?@[]^_`{|}~')];  # no !, ', ", or \
 my $base48900 = [  # PHEAR THIS!
@@ -67,8 +72,8 @@ my $base48900 = [  # PHEAR THIS!
       0xffc2..0xffc7, 0xffca..0xffcf, 0xffd2..0xffd7, 0xffda..0xffdc, 0xffe0..0xffe6, 0xffe8..0xffee,
    )
 ];
-my $calc90    = Math::BaseCalc->new(digits => $base90);
-my $calc48900 = Math::BaseCalc->new(digits => $base48900);
+my $calc90    = sanity::BaseCalc->new(digits => $base90);
+my $calc48900 = sanity::BaseCalc->new(digits => $base48900);
 
 my @FLAGS = (
    # Perl.h HINTS (Bits 0-31)
@@ -231,7 +236,6 @@ my @FLAGS = (
       XXX:autodie/14
       XXX:autodie/15
    ),
-   # Add aliases for top-level stuff like autodie, /all, /default, /io, /ipc
    
    # Other CORE pragmas (Bits 201-216)
    qw(
@@ -253,7 +257,7 @@ my @FLAGS = (
       XXX:CORE/15
    ),
 
-   # Other pragmas (Bits 217-246 and beyond)
+   # Other pragmas (Bits 217-247 and beyond)
    qw(
       NO:autovivification/fetch
       NO:autovivification/exists
@@ -275,6 +279,7 @@ my @FLAGS = (
       IO::File
       IO::Handle
       IO::All
+      Carp
       BITMAP:criticism/0
       BITMAP:criticism/1
       BITMAP:criticism/2
@@ -287,6 +292,7 @@ my @FLAGS = (
       perl5i::2
       perl5i::3
       perl5i::latest
+      Toolkit
    ),
 );
 my %FLAGS;  # namespace abuse I know...
@@ -322,7 +328,7 @@ my %ALIAS = (
    'autodie/io'      => [qw(MULTI:autodie/io  autodie/dbm autodie/file autodie/filesys autodie/ipc autodie/socket)],
    'autodie/default' => [qw(autodie/io autodie/threads)],
    'autodie/all'     => [qw(autodie/default autodie/system)],
-   autodie           => 'autodie/all',
+   autodie           => 'autodie/default',
 
    mro => 'mro/dfs',
    'NO:autovivification' => [map { 'NO:autovivification/'.$_ } qw(fetch exists delete)],
@@ -340,25 +346,25 @@ my %ALIAS = (
    'latest'       => [qw(strict warnings feature)],
    'sane'         => [qw(strict warnings feature utf8)],
    'NO:nonsense'  => [qw(strict warnings true namespace::autoclean)],
-   'Moderl::Perl' => [qw(strict warnings mro/dfs feature IO::File IO::Handle)],
+   'Modern::Perl' => [qw(strict warnings mro/dfs feature IO::File IO::Handle)],
    'strictures'   => [qw(v5.8.4 strict warnings/all/FATAL NO:indirect/fatal NO:multidimensional NO:bareword::filehandles)],
    'uni::perl'    => [qw(
       v5.10 strict feature/5.10
-      -warnings/all/FATAL
-   ), map { "warnings/$_/FATAL" } qw(closed threads internal debugging pack substr malloc
+   ), (
+      map { "warnings/$_/FATAL" } qw(closed threads internal debugging pack substr malloc
       unopened portable prototype inplace io pipe unpack regexp deprecated exiting glob
-      digit printf utf8 layer reserved parenthesis taint closure semicolon),
-   qw(
+      digit printf utf8 layer reserved parenthesis taint closure semicolon)
+   ), qw(
       -warnings/exec/FATAL
       -warnings/newline/FATAL
       utf8
       open/utf8
       open/std
       mro/c3
+      Carp
    )],
    'common::sense' => [qw( 
       strict feature/5.10
-      -warnings/all/FATAL
    ), (
       map { "warnings/$_/FATAL" } qw(closed threads internal debugging pack malloc
       portable prototype inplace io pipe unpack deprecated glob digit printf
@@ -376,7 +382,7 @@ my %ALIAS = (
       NO:autovivification NO:autovivification/store NO:autovivification/strict
       NO:indirect/fatal NO:multidimensional namespace::clean
    )],
-   'Acme::Very::Modern::Perl' => [qw(Modern::Perl -mro/dfs mro/c3 utf8 open/utf8 open/std common::sense perl5i::latest)],
+   'Acme::Very::Modern::Perl' => [qw(Modern::Perl -mro/dfs mro/c3 utf8 open/utf8 open/std common::sense perl5i::latest Toolkit Carp)],
 );
 
 # All FATAL warnings have both bits marked (at least in $^{WARNING_BITS}),
@@ -407,7 +413,7 @@ sub import {
    my $print_hash = find_and_remove(qr/^PRINT_PRAGMA_HASH$/, \@args);
    
    @args = ($class) unless (@args);
-   unshift @args, $class if (all { qr/^-/ } @args);  # don't be all negative and such
+   unshift @args, $class if (all { /^-/ } @args);  # don't be all negative and such
    @args = filter_args(@args);
    
    if ($print_hash) {
@@ -437,6 +443,7 @@ sub import {
    #    warnings
    #    feature
    #    ...anything else...
+   #    namespace::clean
    #    namespace::functions (always last)
    # (If this needs to be changed, let me know and I can reorder it)
    
@@ -450,7 +457,7 @@ sub import {
    }
    
    my @init = find_and_remove(qr/^(?:utf8|mro|strict|warnings|feature)\b/, \@args);
-   my @end  = find_and_remove(qr/^namespace::functions\b/, \@args);
+   my @end  = find_and_remove(qr/^namespace::(clean|functions)\b/, \@args);
    my @mod_list = uniq map { (/^(?:[A-Z]+\:(?!\:))?([\w\:]+)/)[0] } (@init, sort(@args), @end);
    unshift @args, @init;
    push    @args, @end;
@@ -483,12 +490,12 @@ sub unimport {
    my ($class, @args) = @_;
 
    @args = ($class) unless (@args);
-   unshift @args, $class if (all { qr/^-/ } @args);  # don't be all negative and such
+   unshift @args, $class if (all { /^-/ } @args);  # don't be all negative and such
    @args = filter_args(@args);
 
    # Process order: IN REVERSE!
    my @end  = find_and_remove(qr/^(?:utf8|mro|strict|warnings|feature)\b/, \@args);
-   my @init = find_and_remove(qr/^namespace::functions\b/, \@args);
+   my @init = find_and_remove(qr/^namespace::(clean|functions)\b/, \@args);
    my @mod_list = uniq map { (/^(?:[A-Z]+\:(?!\:))?([\w\:]+)/)[0] } (@init, sort(@args), @end);
    unshift @args, @init;
    push    @args, @end;
@@ -503,6 +510,9 @@ sub load_pragma {
    my $method = shift;
    $method = 'import' unless ($method =~ /^(?:un)?import$/);
    return 0 unless (@_);
+
+   # import/unimport called us, so one step back
+   my $target = scalar caller(1);
    
    my ($module, @options);
    foreach my $flag (@_) {
@@ -512,8 +522,9 @@ sub load_pragma {
    
    # handle NO:
    my ($modifier) = ($module =~ s/^([A-Z]+)\:(?!\:)//);
-   $method .= 'un' if ($modifier eq 'NO');
+   $method  = 'un'.$method if ($modifier eq 'NO');
    $method =~ s/^unun//;
+   $method .= '::'.($method =~ /^un/ ? 'out_of' : 'into');
    
    die "Cannot use XXX flag: XXX:$module" if ($modifier eq 'XXX');
 
@@ -527,9 +538,7 @@ sub load_pragma {
    @options = grep { !/^HINT\/unicode$/ } @options if ($module eq 'feature');
    # (adding cleanee to namespace::* modules)
    if ($module =~ /^namespace::/ and not $module eq 'namespace::functions') {
-      @options = (
-         -cleanee => scalar caller(1),  # import/unimport called us, so one step back
-      );
+      @options = (-cleanee => $target);
       # (add 'meta' to namespace::clean's exceptions)
       push @options, (-except => 'meta') if ($module eq 'namespace::clean');
    }
@@ -579,8 +588,7 @@ sub load_pragma {
    
    # DO IT!
    if (eval "require $evalmodule; 1") {
-      #say "$module->$method(".join(', ', @options).");";
-      $module->$method(@options);
+      $module->$method($target, @options);
       return 1;
    }
    return undef;
@@ -637,6 +645,8 @@ sub args2bitmask {
       )$/x) {
          my ($mj, $mn) = ($+{major}, $+{minor});
          ($mj, $mn) = (ord($mj), ord($mn)) if $flag =~ /^\x05/;
+         $mn ||= 0;  # bigint/BigInt has weird problems with undef
+         
          my $bitmask8 = ($mj-8) * 16 + $mn + 1;
          die "Perl version flags for sanity must be at least 5.8.0" if ($bitmask8 <= 0);
          
@@ -648,6 +658,15 @@ sub args2bitmask {
       elsif ($flag =~ /^[!¡]/) {
          die "Only one argument can be provided if you are using a pragma hash!" unless (@_ == 1);
          return decode_pragmahash($flag);
+      }
+      # A UTF-8 pragma hash
+      elsif ($flag =~ /^\xC2\xA1/) {
+         # This could happen if the user sent in a UTF-8 string without saying 'use utf8;' or
+         # any identifying BOFs, etc., saying that the program is in UTF-8.  Of course, the
+         # catch-22 is that they are expecting _sanity_ to enable utf8 for them, so we need to
+         # convert the string manually.
+         require Encode;
+         push @args, Encode::decode('utf8', $flag);
       }
       # A real bitmask
       elsif ($flag =~ /^\d+$/) {
@@ -661,7 +680,7 @@ sub args2bitmask {
          unshift @args, map { $negate_bit ? "-$_" : $_ } (ref $def ? @$def : $def);
       }
       else {
-         die "Unsupported flag: $flag";
+         die "Unsupported flag: $flag (Hex: ".join(' ', map { sprintf("%02X", ord) } split(//, $flag)).")";
       }
    }
    
@@ -705,9 +724,224 @@ sub decode_pragmahash {
 
 __END__
 
-   ex::caution / no crap:
+=head1 SYNOPSIS
+ 
+   use sanity;
+   use sanity 'strictures';
+   use sanity 'Modern::Perl';
+   
+   use sanity qw(
+      strictures -warnings/uninitialized/FATAL
+      NO:autovivification NO:autovivification/store 
+      PRINT_PRAGMA_HASH
+   );
+   use sanity '!0*b^Npow{8T7_yZt<?cT6/?ZCO=Y0LV_Duoc';  # Safer ASCII version
+   use sanity '¡0ǲ鵆㤧뱞⡫瘑빸ን둈댬嚝⠨舁聼䮋';  # Shorter UTF8 version
+ 
+=head1 DESCRIPTION
+
+Modern::Perl?  common::sense?  no nonsense?  use latest?
+
+Everybody has their own opinion on what pragmas and modules are "required"
+for every person to use.  These opinions turn into "personal pragmas", so that
+people don't have to type several C<use> lines of header in front of every module
+they write.
+
+Personal opinions and pragmas don't really belong in the CPAN namespace.  (It's 
+CPAN, not Personal PAN.  If you want a Personal PAN, go call Pizza Hut.)  But
+copying code on potentially hundreds of modules doesn't make sense, either.
+
+That was my mentality when I had a personal opinion of my own.  Why repeat the same
+problem like everybody else?
+
+This "sanity" module attempts to level the playing field by making it a
+b<customizable> personal pragma, allowing you to both reduce the code needed and 
+still implement all of the modules/pragmas you need.
+
+As an illustration to what it's capable of, this pragma will emulate all of the
+other personal pragmas, most of them 100% working exactly how they do it.
+
+=head1 FLAGS
+
+Sanity's flags fall into two types: switches and hashes.
+
+=head2 Switches
+
+Switches are single pragma/module declarations, strict/warning flags, combined
+aliases, or other items that need flags.  Let's start off with a few examples:
+
+   # These three statements do the same thing as...
+   use Modern::Perl;
+   use sanity 'Modern::Perl';
+   use sanity qw(strict warnings mro/dfs feature IO::File IO::Handle);
+   
+   # ...these statements
+   use strict;
+   use warnings;
+   use mro 'dfs';
+   use feature ':all';
+   use IO::File;
+   use IO::Handle;
+
+Basically, it does the same thing as the meta pragma L<Modern::Perl>, except
+you actually don't need that module for it to work.  While there is some magic
+to make sure, say, C<feature> gets loaded with various versions of Perl, it typically
+just works using a standard C<import> call.  The C<strict> and C<warnings> flags
+are combined aliases that enable all of the warnings that they would do via a standard
+call.
+
+=head3 Negating switches
+
+You can turn off switches in the statement:
+
+   use sanity qw(Modern::Perl -mro/dfs);
+
+This does the same thing as above, except it doesn't import the C<mro> pragma.  You
+can negate any switch, including combined aliases, as long as it makes sense.  In other
+words, you need a positive included before you can negate something.
+
+=head3 NO:* switches
+
+Some pragmas work by using the C<U<unimport>> function, so that the English makes sense.
+To keep that syntax, these pragmas are included with a C<NO:> prefix:
+
+   use sanity 'NO:multidimensional';
+   use sanity 'NO:indirect/FATAL';
+
+This will run the C<unimport> function on these pragmas, even though sanity was called
+via the C<import> function (via C<use>).
+   
+=head3 Perl versions
+
+Sanity also supports Perl versions as a special kind of multi-switch to specify minimum
+Perl versions:
+
+   # These are all the same:
+   use v5.10.1;
+   use sanity 'v5.10.1';
+   use sanity v5.10.1;  # as a VSTRING
+   use sanity 5.10.1;   # works, but only as a VSTRING
+   
+   # Upgrade the Perl version of your favorite pragma
+   use sanity qw(NO:nonsense v5.12);
+   
+Note that the version must be at least v5.8.  This should be fine for most people.  (If 
+I get a ticket requesting support for a Perl version older than one released in 2002, I
+will hunt you down and break your keyboard in half.)
+
+=head3 The Default
+
+What does C<sanity> do without any parameters?  Why my personal preference, of course :)
+It's listed in the C<meta pragma> section of the L<LIST OF SWITCHES> below.  I detail the
+reasons behind my choices L<here|sanity::sanity>.
+
+=head2 Hashes
+
+So, there's all of these switches, but unless you're using one of the combiners, typing
+them all out is usually just as much (or more) code as the several lines of C<use>
+statements.  Well, they are all switches so that it fits into a giant bitmap, and that
+bitmap can be compressed into a large ASCII (or UTF-8) "number".
+
+This number can be calculated using the flag C<PRINT_PRAGMA_HASH>:
+
+   # This is merely the definition of uni::perl
+   use sanity (qw(
+      v5.10 strict feature/5.10
+      -warnings/all/FATAL
+   ), (
+      map { "warnings/$_/FATAL" } qw(closed threads internal debugging pack substr malloc
+      unopened portable prototype inplace io pipe unpack regexp deprecated exiting glob
+      digit printf utf8 layer reserved parenthesis taint closure semicolon)
+   ), qw(
+      -warnings/exec/FATAL
+      -warnings/newline/FATAL
+      utf8
+      open/utf8
+      open/std
+      mro/c3
+      Carp
+   ), 'PRINT_PRAGMA_HASH');
+   
+   # Outputs:
+   # use sanity '!04[D{9Fhfqc-7m738S4HK6B#D5=v{,T$(0)F5i';  # Safer ASCII version
+   # use sanity '¡05༕ቑ釩腜쥸봱楇䐍퇥熠ᾯ緻褻真堩';  # Shorter UTF8 version
+
+You can use that hash as the output illustrates without having to type out the entire big
+set of commands or flags.
+
+=head2 Other Meta Pragmas
+
+Have your own set that is too long, and you don't like the ugliness of the hash?  Send me
+your suggestion and I'll probably add it in.
+
+=head1 CAVEATS
+
+=head2 'NO:' ne '-'
+
+A C<NO:> switch is NOT the same as negating a switch!  You also cannot remove the C<NO:>
+from a switch, as it's part of the name of the switch, not a special modifier.
+
+   # These two are NOT the same!
+   use sanity 'NO:indirect';  # runs indirect->unimport()
+   use sanity '-indirect';    # Dies, as there is no such switch
+   
+   # This runs through the strictures multi-switch and runs autovivification->unimport()
+   use sanity qw(strictures NO:autovivification);
+   
+   # This runs through the strictures multi-switch WITHOUT running indirect->unimport()
+   use sanity qw(strictures -NO:indirect);
+   
+   use sanity '-indirect';    # This isn't what you want...
+   no  sanity 'NO:indirect';  # ...you really meant to do this...
+   use indirect;              # ...but this is better
+   
+=head2 Special clearing of strict/warnings
+
+Since most people want exactly the strictness and warnings they specify, sanity will
+clear these out first before running through the list.
+
+   # This...
+   use sanity qw(strict -strict/vars);
+   
+   # ...is the same as this...
+   no strict;
+   use strict qw(subs refs);
+
+Also, some special magic is in place to ensure that newer warnings/features aren't
+fatal to older Perls.  See L<https://rt.perl.org/rt3/Ticket/Display.html?id=112920>.
+
+=head2 "Author" pragmas
+
+Certain pragmas really only exist to make sure the code is designed right.  These 
+pragmas are deemed "optional" by C<sanity>.  In other words, if the user doesn't
+have them, it will just silently ignore them and move on.  If C<sanity> thinks your
+an author/coder of the module itself (.git/svn/$ENV checks), it will give you a
+warning that they are missing, but move on.
+
+The following modules don't "instadie".  Modules that fall under this list don't
+change the nature of how Perl works, or would let you do something that would
+normally fatally error.
+
+   overloading
+   autovivification
+   indirect
+   multidimensional
+   bareword::filehandles
+   criticism
+
+   # (autovivification probably shouldn't be here, since it actually
+   # prevents autoviv, but it's generally used as an author tool.)
+
+This feature was borrowed from L<strictures> and tweaked.   
+
+=head1 LIST OF SWITCHES
+
+   ### Emulation of "meta pragmas" ###
+
+   ex::caution:
       strict
       warnings
+   NO:crap:  # Same as above
    latest:
       strict
       warnings
@@ -717,7 +951,7 @@ __END__
       warnings
       feature
       utf8
-   no nonsense:
+   NO:nonsense:
       strict
       warnings
       true
@@ -736,7 +970,16 @@ __END__
       no indirect 'fatal'
       no multidimensional
       no bareword::filehandles
-   uni::perl: (minus Carp)
+   common::sense: (without the "memory usage" BS)
+      utf8
+      strict qw(subs vars)
+      feature qw(say state switch)
+      no warnings
+      warnings FATAL => qw(closed threads internal debugging pack malloc portable prototype
+                           inplace io pipe unpack deprecated glob digit printf
+                           layer reserved taint closure semicolon)
+      no warnings qw(exec newline unopened);
+   uni::perl: (ditto)
       v5.10
       strict
       feature qw(say state switch)
@@ -749,15 +992,7 @@ __END__
       utf8
       open (:utf8 :std)
       mro 'c3'
-   common::sense: (without the "memory usage" BS)
-      utf8
-      strict qw(subs vars)
-      feature qw(say state switch)
-      no warnings
-      warnings FATAL => qw(closed threads internal debugging pack malloc portable prototype
-                           inplace io pipe unpack deprecated glob digit printf
-                           layer reserved taint closure semicolon)
-      no warnings qw(exec newline unopened);
+      Carp
    sanity:
       v5.10.1
       utf8
@@ -771,10 +1006,10 @@ __END__
       no autovivification qw(fetch exists delete store strict)
       no indirect 'fatal'
       no multidimensional
-      namespace::clean -except => 'meta'
+      namespace::sweep
    perl5i::0 / 1 / 2 / latest:
       [the real module] (the pragma is too insane to try to duplicate here)
-   Acme::Very::Modern::Perl: (minus Toolkit + Carp)
+   Acme::Very::Modern::Perl:  (a joke, but it's still here all the same)
       strict
       warnings
       mro 'c3'
@@ -789,3 +1024,96 @@ __END__
                            layer reserved taint closure semicolon)
       no warnings qw(exec newline unopened);
       perl5i::latest
+      Toolkit
+      Carp
+ 
+   ### Other switches/aliases ###
+   
+   strict/* => strict '[whatever]'        # supports all flags
+   strict   => strict qw(refs subs vars)
+
+   # other "hints"
+   integer
+   locale
+   bytes
+   re/taint
+   re/eval
+   filetest
+   utf8
+   NO:overloading
+   
+   warnings/*       => warnings NONFATAL => '[whatever]'  # supports all flags, multi or not
+   warnings/*/FATAL => warnings    FATAL => '[whatever]'  # supports all flags; FATAL trumps NONFATAL
+   warnings         => warnings NONFATAL => 'all'
+   warnings/FATAL   => warnings    FATAL => 'all'
+   
+   feature/*        => feature '[whatever]'  # supports all flags
+   feature/5.*      => # similar to feature enabling via 'use v5.*'
+   feature/5.9.5    => # also exists, just like feature/5.10
+   feature          => feature ':all'  # not exactly, but in spirit
+   
+   # Perl versions, described above
+   v5.##.##
+   
+   # autodie
+   autodie/* => autodie ':[whatever]'  # supports all _category_ flags, like all, io, shm, etc.
+                                       # (Will expand if requested, but I don't want to waste
+                                       # all of that bit space right now.)
+   autodie   => autodie ':default'
+   
+   # other CORE pragmas
+   bigint
+   bignum
+   bigrat
+   charnames
+   charnames/short
+   charnames/full
+   encoding::warnings
+   encoding::warnings/FATAL
+   mro/dfs                    # default for 'mro'
+   mro/c3
+   open/*
+
+   # namespace cleaners
+   namespace::clean       # included last; adds -except => 'meta'
+   namespace::functions   # included last                                    
+   namespace::autoclean
+   namespace::sweep
+
+   # others
+   NO:autovivification/*
+   NO:autovivification => no autovivification qw(fetch exists delete)
+
+   criticism/*
+   criticism   => criticism 'gentle'
+
+   perl5i::0
+   perl5i::1
+   perl5i::2
+   perl5i::3
+   perl5i::latest
+   
+   NO:indirect
+   NO:indirect/global
+   NO:indirect/fatal
+   NO:multidimensional
+   NO:bareword::filehandles
+   
+   subs::auto
+   utf8::all
+   IO::File
+   IO::Handle
+   IO::All
+   Carp
+   vendorlib
+   swd
+   true
+   autolocale
+   Toolkit
+
+Am I missing something?  Let me know.
+
+=head1 TODO
+
+While the module itself has been tested in the wild quite a bit, it could use some
+better *.t tests.
