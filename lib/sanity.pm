@@ -407,6 +407,7 @@ sub import {
    my $print_hash = find_and_remove(qr/^PRINT_PRAGMA_HASH$/, \@args);
    
    @args = ($class) unless (@args);
+   unshift @args, $class if (all { qr/^-/ } @args);  # don't be all negative and such
    @args = filter_args(@args);
    
    if ($print_hash) {
@@ -482,6 +483,7 @@ sub unimport {
    my ($class, @args) = @_;
 
    @args = ($class) unless (@args);
+   unshift @args, $class if (all { qr/^-/ } @args);  # don't be all negative and such
    @args = filter_args(@args);
 
    # Process order: IN REVERSE!
@@ -526,8 +528,10 @@ sub load_pragma {
    # (adding cleanee to namespace::* modules)
    if ($module =~ /^namespace::/ and not $module eq 'namespace::functions') {
       @options = (
-         -cleanee => scalar caller(2),  # import/unimport called us, so one step back
+         -cleanee => scalar caller(1),  # import/unimport called us, so one step back
       );
+      # (add 'meta' to namespace::clean's exceptions)
+      push @options, (-except => 'meta') if ($module eq 'namespace::clean');
    }
    # (handling of FATAL in warnings)
    if ($module eq 'warnings') {
@@ -767,7 +771,7 @@ __END__
       no autovivification qw(fetch exists delete store strict)
       no indirect 'fatal'
       no multidimensional
-      namespace::clean
+      namespace::clean -except => 'meta'
    perl5i::0 / 1 / 2 / latest:
       [the real module] (the pragma is too insane to try to duplicate here)
    Acme::Very::Modern::Perl: (minus Toolkit + Carp)
