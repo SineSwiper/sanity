@@ -9,6 +9,7 @@ BEGIN { $VER_PACK = sprintf(":%vd", $^V); }
 # Eat our own dog food
 use utf8;  # the BaseCalc 'numbers' are definitely UTF-8
 use strict qw(subs vars);
+no strict 'refs';
 use feature ($VER_PACK);
 use warnings FATAL => 'all';
 no warnings qw(uninitialized);
@@ -546,10 +547,19 @@ sub load_pragma {
       @fatal    = notin(\@combos, [ foundin(\@warn_categories, \@fatal)    ]);
       @nonfatal = notin(\@combos, [ foundin(\@warn_categories, \@nonfatal) ]);
       
+      # if this is an import, first clean all warnings
+      require warnings;
+      warnings->unimport();
+      
       # warnings can handle both in one import, so let's do it that way
       @options = ();
       push(@options, FATAL    =>    @fatal) if    (@fatal);
       push(@options, NONFATAL => @nonfatal) if (@nonfatal);
+   }
+   if ($module eq 'strict') {
+      # if this is an import, first clean all stricts
+      require strict;
+      strict->unimport();
    }
    # (BITMAPs)
    if ($modifier eq 'BITMAP') {
@@ -750,6 +760,7 @@ __END__
       open (:utf8 :std)
       mro 'c3'
       strict qw(subs vars)
+      no strict 'refs'
       warnings FATAL => 'all'
       no warnings qw(uninitialized)
       feature qw(say state switch)
