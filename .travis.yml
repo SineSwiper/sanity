@@ -1,0 +1,24 @@
+language: perl
+perl:
+   - "5.16"
+   - "5.14"
+   - "5.12"
+   - "5.10"
+
+install:
+   # Deal with all of the DZIL dependancies, quickly and quietly
+   - cpanm --quiet --notest Dist::Zilla
+   - dzil authordeps | cpanm --quiet --notest
+
+   # Install the lowest possible required version for the dependencies
+   - cpanm MSTROUT/Import-Into-1.001000.tar.gz
+   - cpanm VPARSEVAL/List-MoreUtils-0.04.tar.gz
+   - cpanm FRIEDO/namespace-sweep-0.004.tar.gz
+   - cpanm MSCHWERN/Test-Simple-0.88.tar.gz
+script:
+   - dzil smoke --release --author
+
+notifications:
+   email: false
+   irc:
+      - "irc.perl.org#sanity"

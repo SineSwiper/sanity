@@ -39,7 +39,7 @@ That was my mentality when I had a personal opinion of my own.  Why repeat the s
 problem like everybody else?
 
 This "sanity" module attempts to level the playing field by making it a
-b<customizable> personal pragma, allowing you to both reduce the code needed and 
+B<customizable> personal pragma, allowing you to both reduce the code needed and 
 still implement all of the modules/pragmas you need.
 
 As an illustration to what it's capable of, this pragma will emulate all of the

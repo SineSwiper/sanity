@@ -23,7 +23,7 @@ use sanity::BaseCalc;  ### FIXME: Temporary until Math::BaseCalc fix (RT #77198)
 use List::MoreUtils qw(any all none uniq);
 
 # Useful for importing modules, including stuff like Carp and its exports
-use Import::Into v1.1.0;
+use Import::Into 1.001000;
 
 my $base90 = [0..9, 'A'..'Z', 'a'..'z', split(//, '#$%&()*+.,-/:;<=>?@[]^_`{|}~')];  # no !, ', ", or \
 my $base48900 = [  # PHEAR THIS!
@@ -755,7 +755,7 @@ That was my mentality when I had a personal opinion of my own.  Why repeat the s
 problem like everybody else?
 
 This "sanity" module attempts to level the playing field by making it a
-b<customizable> personal pragma, allowing you to both reduce the code needed and 
+B<customizable> personal pragma, allowing you to both reduce the code needed and 
 still implement all of the modules/pragmas you need.
 
 As an illustration to what it's capable of, this pragma will emulate all of the
