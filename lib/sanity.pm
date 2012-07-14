@@ -316,12 +316,14 @@ my %ALIAS = (
 
    'feature/unicode'         => [qw(MULTI:feature/unicode feature/HINT/unicode)],
    'feature/unicode_strings' => 'feature/unicode',
-   'feature/5.10'            => [qw(feature/say feature/state feature/switch)],
    'feature/5.9.5'           => 'feature/5.10',
+   'feature/5.10'            => [qw(feature/say feature/state feature/switch)],
    'feature/5.11'            => [qw(feature/5.10 feature/unicode)],
    'feature/5.12'            => 'feature/5.11',
    'feature/5.13'            => 'feature/5.11',
    'feature/5.14'            => 'feature/5.11',
+   'feature/5.15'            => 'feature/5.11',
+   'feature/5.16'            => 'feature/5.11',
    feature                   => 'feature/^V',
    
    'autodie/ipc'     => [qw(MULTI:autodie/ipc autodie/msg autodie/semaphore autodie/shm)],
@@ -680,7 +682,7 @@ sub args2bitmask {
          unshift @args, map { $negate_bit ? "-$_" : $_ } (ref $def ? @$def : $def);
       }
       else {
-         die "Unsupported flag: $flag (Hex: ".join(' ', map { sprintf("%02X", ord) } split(//, $flag)).")";
+         die "Unsupported flag: $flag";
       }
    }
    
@@ -761,14 +763,17 @@ still implement all of the modules/pragmas you need.
 As an illustration to what it's capable of, this pragma will emulate all of the
 other personal pragmas, most of them 100% working exactly how they do it.
 
-=head1 FLAGS
+=head1 PARAMETERS
 
-Sanity's flags fall into two types: switches and hashes.
+Sanity's parameters fall into three types: flags, aliases, and hashes.  (Oh my!)
 
-=head2 Switches
+=head2 Flags and Aliases
 
-Switches are single pragma/module declarations, strict/warning flags, combined
-aliases, or other items that need flags.  Let's start off with a few examples:
+Flags are single pragma/module declarations, strict/warning flags, or other
+items that need flags.  Aliases are merely one or more flags, grouped
+together to better emulate the pragma/module's functionality.
+
+Let's start off with an example:
 
    # These three statements do the same thing as...
    use Modern::Perl;
@@ -790,17 +795,17 @@ just works using a standard C<import> call.  The C<strict> and C<warnings> flags
 are combined aliases that enable all of the warnings that they would do via a standard
 call.
 
-=head3 Negating switches
+=head3 Negating flags/aliases
 
-You can turn off switches in the statement:
+You can turn off flags in the statement:
 
    use sanity qw(Modern::Perl -mro/dfs);
 
 This does the same thing as above, except it doesn't import the C<mro> pragma.  You
-can negate any switch, including combined aliases, as long as it makes sense.  In other
+can negate any flag, including combined aliases, as long as it makes sense.  In other
 words, you need a positive included before you can negate something.
 
-=head3 NO:* switches
+=head3 NO:* flags/aliases
 
 Some pragmas work by using the C<B<unimport>> function, so that the English makes sense.
 To keep that syntax, these pragmas are included with a C<NO:> prefix:
@@ -813,14 +818,14 @@ via the C<import> function (via C<use>).
    
 =head3 Perl versions
 
-Sanity also supports Perl versions as a special kind of multi-switch to specify minimum
-Perl versions:
+Sanity also supports Perl versions as a special kind of alias to specify minimum Perl
+versions:
 
    # These are all the same:
    use v5.10.1;
    use sanity 'v5.10.1';
    use sanity v5.10.1;  # as a VSTRING
-   use sanity 5.10.1;   # works, but only as a VSTRING
+   use sanity 5.10.1;   # works too
    
    # Upgrade the Perl version of your favorite pragma
    use sanity qw(NO:nonsense v5.12);
@@ -832,14 +837,14 @@ will hunt you down and break your keyboard in half.)
 =head3 The Default
 
 What does C<sanity> do without any parameters?  Why my personal preference, of course :)
-It's listed in the C<meta pragma> section of the L<LIST OF SWITCHES> below.  I detail the
+It's listed in the C<meta pragma> section of the L<LIST OF flags> below.  I detail the
 reasons behind my choices L<here|sanity::sanity>.
 
 =head2 Hashes
 
-So, there's all of these switches, but unless you're using one of the combiners, typing
-them all out is usually just as much (or more) code as the several lines of C<use>
-statements.  Well, they are all switches so that it fits into a giant bitmap, and that
+So, there's all of these flags, but unless you're using one of the combined aliases,
+typing them all out is usually just as much (or more) code as the several lines of C<use>
+statements.  Well, they are all flags so that it fits into a giant bitmap, and that
 bitmap can be compressed into a large ASCII (or UTF-8) "number".
 
 This number can be calculated using the flag C<PRINT_PRAGMA_HASH>:
@@ -847,7 +852,6 @@ This number can be calculated using the flag C<PRINT_PRAGMA_HASH>:
    # This is merely the definition of uni::perl
    use sanity (qw(
       v5.10 strict feature/5.10
-      -warnings/all/FATAL
    ), (
       map { "warnings/$_/FATAL" } qw(closed threads internal debugging pack substr malloc
       unopened portable prototype inplace io pipe unpack regexp deprecated exiting glob
@@ -878,17 +882,17 @@ your suggestion and I'll probably add it in.
 
 =head2 'NO:' ne '-'
 
-A C<NO:> switch is NOT the same as negating a switch!  You also cannot remove the C<NO:>
-from a switch, as it's part of the name of the switch, not a special modifier.
+A C<NO:> flag is NOT the same as negating a flag!  You also cannot remove the C<NO:>
+from a flag, as it's part of the name of the flag, not a special modifier.
 
    # These two are NOT the same!
    use sanity 'NO:indirect';  # runs indirect->unimport()
-   use sanity '-indirect';    # Dies, as there is no such switch
+   use sanity '-indirect';    # Dies, as there is no such flag/alias
    
-   # This runs through the strictures multi-switch and runs autovivification->unimport()
+   # This runs through the strictures alias and runs autovivification->unimport()
    use sanity qw(strictures NO:autovivification);
    
-   # This runs through the strictures multi-switch WITHOUT running indirect->unimport()
+   # This runs through the strictures alias WITHOUT running indirect->unimport()
    use sanity qw(strictures -NO:indirect);
    
    use sanity '-indirect';    # This isn't what you want...
@@ -934,9 +938,9 @@ normally fatally error.
 
 This feature was borrowed from L<strictures> and tweaked.   
 
-=head1 LIST OF SWITCHES
+=head1 LIST OF flags
 
-   ### Emulation of "meta pragmas" ###
+=head2 Emulation of "meta pragmas"
 
    ex::caution:
       strict
@@ -973,7 +977,7 @@ This feature was borrowed from L<strictures> and tweaked.
    common::sense: (without the "memory usage" BS)
       utf8
       strict qw(subs vars)
-      feature qw(say state switch)
+      feature qw(say state flag)
       no warnings
       warnings FATAL => qw(closed threads internal debugging pack malloc portable prototype
                            inplace io pipe unpack deprecated glob digit printf
@@ -982,7 +986,7 @@ This feature was borrowed from L<strictures> and tweaked.
    uni::perl: (ditto)
       v5.10
       strict
-      feature qw(say state switch)
+      feature qw(say state flag)
       no warnings
       warnings qw(FATAL closed threads internal debugging pack substr malloc
                       unopened portable prototype inplace io pipe unpack regexp
@@ -1002,7 +1006,7 @@ This feature was borrowed from L<strictures> and tweaked.
       no strict 'refs'
       warnings FATAL => 'all'
       no warnings qw(uninitialized)
-      feature qw(say state switch)
+      feature qw(say state flag)
       no autovivification qw(fetch exists delete store strict)
       no indirect 'fatal'
       no multidimensional
@@ -1027,7 +1031,7 @@ This feature was borrowed from L<strictures> and tweaked.
       Toolkit
       Carp
  
-   ### Other switches/aliases ###
+=head2 Other flags/aliases
    
    strict/* => strict '[whatever]'        # supports all flags
    strict   => strict qw(refs subs vars)
@@ -1048,7 +1052,7 @@ This feature was borrowed from L<strictures> and tweaked.
    warnings/FATAL   => warnings    FATAL => 'all'
    
    feature/*        => feature '[whatever]'  # supports all flags
-   feature/5.*      => # similar to feature enabling via 'use v5.*'
+   feature/5.##     => # similar to feature enabling via 'use v5.##'; major version only
    feature/5.9.5    => # also exists, just like feature/5.10
    feature          => feature ':all'  # not exactly, but in spirit
    
