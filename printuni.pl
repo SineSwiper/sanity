@@ -79,5 +79,3 @@ print "\n\n";
 print join '', @$baseXXX;
 print "\nTotal characters: ".scalar(@$baseXXX)."\n";
 print "\n\n$codestr\n";
-
-

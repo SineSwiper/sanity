@@ -284,7 +284,6 @@ my @FLAGS = (
       BITMAP:criticism/1
       BITMAP:criticism/2
       vendorlib
-      swd
       true
       autolocale
       perl5i::0
@@ -1110,7 +1109,6 @@ This feature was borrowed from L<strictures> and tweaked.
    IO::All
    Carp
    vendorlib
-   swd
    true
    autolocale
    Toolkit
@@ -1119,5 +1117,4 @@ Am I missing something?  Let me know.
 
 =head1 TODO
 
-While the module itself has been tested in the wild quite a bit, it could use some
-better *.t tests.
+Actually need to write sanity::sanity POD.
