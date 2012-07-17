@@ -1,4 +1,4 @@
-﻿package sanity;
+package sanity;
 
 # VERSION
 # ABSTRACT: The ONLY meta pragma you'll ever need!
