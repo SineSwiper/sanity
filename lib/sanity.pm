@@ -381,7 +381,7 @@ my %ALIAS = (
       v5.10.1 utf8 open/utf8 open/std mro/c3 strict/subs strict/vars feature
       warnings/all/FATAL -warnings/uninitialized/FATAL
       NO:autovivification NO:autovivification/store NO:autovivification/strict
-      NO:indirect/fatal NO:multidimensional namespace::clean
+      NO:indirect/fatal NO:multidimensional namespace::sweep
    )],
    'Acme::Very::Modern::Perl' => [qw(Modern::Perl -mro/dfs mro/c3 utf8 open/utf8 open/std common::sense perl5i::latest Toolkit Carp)],
 );

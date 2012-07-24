@@ -21,6 +21,5 @@ install:
 script:
    - dzil smoke --release --author
 notifications:
-   email: false
    irc:
       - "irc.perl.org#sanity"
