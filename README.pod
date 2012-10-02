@@ -226,6 +226,7 @@ This feature was borrowed from L<strictures> and tweaked.
       strict
       warnings
    NO:crap:  # Same as above
+   shit:     # Same as above
    latest:
       strict
       warnings
@@ -290,7 +291,6 @@ This feature was borrowed from L<strictures> and tweaked.
       no autovivification qw(fetch exists delete store strict)
       no indirect 'fatal'
       no multidimensional
-      namespace::sweep
    perl5i::0 / 1 / 2 / latest:
       [the real module] (the pragma is too insane to try to duplicate here)
    Acme::Very::Modern::Perl:  (a joke, but it's still here all the same)

@@ -7,19 +7,19 @@ perl:
 
 install:
    # Deal with all of the DZIL dependancies, quickly and quietly
-   - cpanm --quiet --notest Dist::Zilla
-   - dzil authordeps | cpanm --quiet --notest
+   - cpanm --quiet --notest --skip-satisfied Dist::Zilla
+   - dzil authordeps | grep -vP '[^\w:]' | xargs -n 5 -P 10 cpanm --quiet --notest --skip-satisfied
 
-   # Install the lowest possible required version for the dependencies
-   - export OLD_CPANM_OPT=$PERL_CPANM_OPT
-   - export PERL_CPANM_OPT='--mirror http://cpan.metacpan.org/ --mirror http://search.cpan.org/CPAN '$PERL_CPANM_OPT
-   - cpanm MSTROUT/Import-Into-1.001000.tar.gz
-   - cpanm VPARSEVAL/List-MoreUtils-0.04.tar.gz
-   - cpanm FRIEDO/namespace-sweep-0.004.tar.gz
-   - cpanm MSCHWERN/Test-Simple-0.88.tar.gz
-   - export PERL_CPANM_OPT=$OLD_CPANM_OPT
+   - export RELEASE_TESTING=1 AUTOMATED_TESTING=1 AUTHOR_TESTING=1 HARNESS_OPTIONS=j10:c HARNESS_TIMER=1
+   - dzil listdeps | grep -vP '[^\w:]' | cpanm --verbose
 script:
    - dzil smoke --release --author
 notifications:
    irc:
-      - "irc.perl.org#sanity"
+      channels:
+         - "irc.perl.org#sanity"
+      template:
+         - "%{branch}#%{build_number} by %{author}: %{message} (%{build_url})
+      on_success: change
+      on_failure: always
+      use_notice: true
