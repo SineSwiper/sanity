@@ -6,7 +6,7 @@ package  # hide from PAUSE
 
 use strict;
 use Carp;
-use Math::BigInt;
+use Math::BigInt 1.78;  # 1.78 = round_mode => common
 use Math::BigFloat;
 
 # configure some basic big number stuff

@@ -292,6 +292,13 @@ my @FLAGS = (
       perl5i::latest
       Toolkit
    ),
+   # new adds
+   qw(
+      Function::Parameters
+      Function::Parameters/strict
+      Switch::Plain
+      Quote::Code
+   ),
 );
 my %FLAGS;  # namespace abuse I know...
 $FLAGS{$FLAGS[$_]} = $_ for (0 .. @FLAGS-1);
@@ -532,7 +539,7 @@ sub load_pragma {
    # Specific exceptions
    
    # (:param format for certain modules)
-   @options = map { ":$_" } @options if ($module =~ /^(?:open|indirect|charnames|autodie)$/);
+   @options = map { ":$_" } @options if ($module =~ /^(?:open|indirect|charnames|autodie|Function::Parameters)$/);
    # ^V = $^V (like feature)
    @options = map { $_ = ($_ eq '^V') ? $VER_PACK : $_ } @options;
    # remove feature/HINT/unicode
@@ -724,6 +731,8 @@ sub decode_pragmahash {
 1;
 
 __END__
+
+=encoding utf-8
 
 =head1 SYNOPSIS
  
@@ -917,7 +926,7 @@ fatal to older Perls.  See L<https://rt.perl.org/rt3/Ticket/Display.html?id=1129
 
 Certain pragmas really only exist to make sure the code is designed right.  These 
 pragmas are deemed "optional" by C<sanity>.  In other words, if the user doesn't
-have them, it will just silently ignore them and move on.  If C<sanity> thinks your
+have them, it will just silently ignore them and move on.  If C<sanity> thinks you're
 an author/coder of the module itself (.git/svn/$ENV checks), it will give you a
 warning that they are missing, but move on.
 
@@ -1112,6 +1121,11 @@ This feature was borrowed from L<strictures> and tweaked.
    true
    autolocale
    Toolkit
+   
+   Function::Parameters
+   Function::Parameters/strict
+   Switch::Plain
+   Quote::Code
 
 Am I missing something?  Let me know.
 
