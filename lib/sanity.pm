@@ -111,7 +111,7 @@ my @FLAGS = (
       XXX:HINT_0x40000000
       XXX:HINT_0x80000000
    ),
-   
+
    # warnings.pm (Bits 32-160)
    # (matches REVERSE ordering of $^{WARNING_BITS} << 32)
    qw(
@@ -180,7 +180,7 @@ my @FLAGS = (
       XXX:warnings/62        XXX:warnings/62/FATAL
       XXX:warnings/63        XXX:warnings/63/FATAL
    ),
-   
+
    # feature (Bits 161-176)
    qw(
       feature/^V
@@ -200,7 +200,7 @@ my @FLAGS = (
       XXX:feature/14
       XXX:feature/15
    ),
-   
+
    # Perl versions (Bits 177-184)
    # (MAJOR-8)*16 + MINOR + 1 = 8-bit bitmap
    qw(
@@ -235,7 +235,7 @@ my @FLAGS = (
       XXX:autodie/14
       XXX:autodie/15
    ),
-   
+
    # Other CORE pragmas (Bits 201-216)
    qw(
       bigint
@@ -330,7 +330,7 @@ my %ALIAS = (
    'feature/5.15'            => 'feature/5.11',
    'feature/5.16'            => 'feature/5.11',
    feature                   => 'feature/^V',
-   
+
    'autodie/ipc'     => [qw(MULTI:autodie/ipc autodie/msg autodie/semaphore autodie/shm)],
    'autodie/io'      => [qw(MULTI:autodie/io  autodie/dbm autodie/file autodie/filesys autodie/ipc autodie/socket)],
    'autodie/default' => [qw(autodie/io autodie/threads)],
@@ -339,14 +339,14 @@ my %ALIAS = (
 
    mro => 'mro/dfs',
    'NO:autovivification' => [map { 'NO:autovivification/'.$_ } qw(fetch exists delete)],
-   
+
    'criticism/gentle' => [map { 'BITMAP:criticism/'.$_ } qw(0 2)],
    'criticism/stern'  => 'BITMAP:criticism/2',
    'criticism/harsh'  => [map { 'BITMAP:criticism/'.$_ } qw(0 1)],
    'criticism/cruel'  => 'BITMAP:criticism/1',
    'criticism/brutal' => 'BITMAP:criticism/0',
    criticism          => 'criticism/gentle',
-   
+
    # mimicry of other "meta pragma" modules
    'ex::caution'  => [qw(strict warnings)],
    'NO:crap'      => [qw(strict warnings)],
@@ -371,7 +371,7 @@ my %ALIAS = (
       mro/c3
       Carp
    )],
-   'common::sense' => [qw( 
+   'common::sense' => [qw(
       strict feature/5.10
    ), (
       map { "warnings/$_/FATAL" } qw(closed threads internal debugging pack malloc
@@ -419,11 +419,11 @@ sub import {
 
    # See if we need to encode a pragma hash
    my $print_hash = find_and_remove(qr/^PRINT_PRAGMA_HASH$/, \@args);
-   
+
    @args = ($class) unless (@args);
    unshift @args, $class if (all { /^-/ } @args);  # don't be all negative and such
    @args = filter_args(@args);
-   
+
    if ($print_hash) {
       binmode STDOUT, ':utf8';
       print "use $class '".encode_pragmahash(\@args, '!')."';  # Safer ASCII version\n";
@@ -434,15 +434,11 @@ sub import {
 
    # Look for every indicator that proves that the user is in the distro directory
    # and appears to be one of the coders
-   my $author_mode = !!($0 =~ /^x?t\/.*\.t$/ && (-d '.git' or -d '.svn'));
-   $author_mode = 1 if ($ENV{PERL5OPT} =~ /CPAN-Reporter/);
-   $author_mode = 1 if (grep { $ENV{$_} } (qw/
-      AUTOMATED_TESTING RELEASE_TESTING AUTHOR_TESTING PERL_CR_SMOKER_CURRENT
-   /) );
+   my $author_mode = !!((caller)[1] =~ /^(?:x?t|b?lib)[\/\\]/ && (-d '.git' or -d '.svn'));
    $author_mode = 0 if (grep {
       $ENV{"PERL5_${_}_IS_RUNNING"} || $ENV{"PERL5_${_}_IS_RUNNING_IN_RECURSION"}
    } (qw/CPANM CPANP CPANPLUS CPAN/) );
-   
+
    # Process order:
    #    v5.##.##
    #    utf8
@@ -454,7 +450,7 @@ sub import {
    #    namespace::clean
    #    namespace::functions (always last)
    # (If this needs to be changed, let me know and I can reorder it)
-   
+
    # Perl version
    if ( my @perl_version = find_and_remove(qr/^BITMAP:perl\b/, \@args) ) {
       my $bitmap = args2bitmask(@perl_version) >> $FLAGS{'BITMAP:perl/0'};
@@ -463,7 +459,7 @@ sub import {
 
       eval "use v5.$mj.$mn";
    }
-   
+
    my @init = find_and_remove(qr/^(?:utf8|mro|strict|warnings|feature)\b/, \@args);
    my @end  = find_and_remove(qr/^namespace::(clean|functions)\b/, \@args);
    my @mod_list = uniq map { (/^(?:[A-Z]+\:(?!\:))?([\w\:]+)/)[0] } (@init, sort(@args), @end);
@@ -478,7 +474,7 @@ sub import {
          push @failed, $module;
       }
    }
-   
+
    if (@failed and $author_mode and not $author_load_warned++) {
       my $failed = join ' ', @failed;
       warn <<EOE;
@@ -521,23 +517,23 @@ sub load_pragma {
 
    # import/unimport called us, so one step back
    my $target = scalar caller(1);
-   
+
    my ($module, @options);
    foreach my $flag (@_) {
       ($module, my $param) = ($flag =~ qr!^([\w\:]+)(?:/(.+))?!);
       push @options, $param if ($param);
-   }   
-   
+   }
+
    # handle NO:
    my ($modifier) = ($module =~ s/^([A-Z]+)\:(?!\:)//);
    $method  = 'un'.$method if ($modifier eq 'NO');
    $method =~ s/^unun//;
    $method .= '::'.($method =~ /^un/ ? 'out_of' : 'into');
-   
+
    die "Cannot use XXX flag: XXX:$module" if ($modifier eq 'XXX');
 
    # Specific exceptions
-   
+
    # (:param format for certain modules)
    @options = map { ":$_" } @options if ($module =~ /^(?:open|indirect|charnames|autodie|Function::Parameters)$/);
    # ^V = $^V (like feature)
@@ -556,22 +552,22 @@ sub load_pragma {
       my $options = [@options];
       my @fatal = map { s|/FATAL$||; $_ } find_and_remove(qr|/FATAL$|, $options);
       my @nonfatal = notin(\@fatal, $options);
-      
+
       # To prevent "Unknown warnings category" errors for various versions of Perl,
       # we'll need to remove the ones that don't exist in the current version.
-      
+
       # (also remove the combo flags while we're at it...)
       my @combos = grep { /^MULTI:warnings\/\w+$/ } @FLAGS;
          @combos = map  { s|MULTI:warnings/||; $_ } @combos;
-      
+
       my @warn_categories = keys %warnings::Offsets;
       @fatal    = notin(\@combos, [ foundin(\@warn_categories, \@fatal)    ]);
       @nonfatal = notin(\@combos, [ foundin(\@warn_categories, \@nonfatal) ]);
-      
+
       # if this is an import, first clean all warnings
       require warnings;
       warnings->unimport();
-      
+
       # warnings can handle both in one import, so let's do it that way
       @options = ();
       push(@options, FATAL    =>    @fatal) if    (@fatal);
@@ -593,7 +589,7 @@ sub load_pragma {
    # open gets kinda strange with the eval/require
    my $evalmodule = $module;
    $evalmodule = "'open.pm'" if ($module eq 'open');
-   
+
    # DO IT!
    if (eval "require $evalmodule; 1") {
       $module->$method($target, @options);
@@ -606,12 +602,12 @@ sub find_and_remove {
    my ($re, $arr) = @_;
    return (wantarray ? () : undef) unless @$arr;
    $re = qr/$re/ unless (ref $re eq 'Regexp');
-   
+
    my @flags;
    for (my $i = 0; $i < @$arr; $i++) {
       push @flags, splice(@$arr, $i--, 1) if ($arr->[$i] =~ $re);
    }
-   
+
    return @flags;
 }
 
@@ -633,7 +629,7 @@ sub filter_args {
 
 sub args2bitmask {
    my @args = @_;
-   
+
    my $bitmask = 0;
    while (my $flag = shift @args) {
       my $negate_bit = ($flag =~ s/^-//);
@@ -654,10 +650,10 @@ sub args2bitmask {
          my ($mj, $mn) = ($+{major}, $+{minor});
          ($mj, $mn) = (ord($mj), ord($mn)) if $flag =~ /^\x05/;
          $mn ||= 0;  # bigint/BigInt has weird problems with undef
-         
+
          my $bitmask8 = ($mj-8) * 16 + $mn + 1;
          die "Perl version flags for sanity must be at least 5.8.0" if ($bitmask8 <= 0);
-         
+
          foreach my $bit8 (0..7) {
             push @args, 'BITMAP:perl/'.$bit8 if ($bitmask8 & 1 << $bit8);
          }
@@ -691,7 +687,7 @@ sub args2bitmask {
          die "Unsupported flag: $flag";
       }
    }
-   
+
    return $bitmask;
 }
 
@@ -702,7 +698,7 @@ sub bitmask2flags {
    foreach my $bit (0..@FLAGS-1) {
       push @flags, $FLAGS[$bit] if ($bitmask & 1 << $bit);
    }
-  
+
    return @flags;
 }
 
@@ -711,7 +707,7 @@ my $CURRENT_HASH_VERSION = 0;
 sub encode_pragmahash {
    my ($flags, $type) = @_;
    $type ||= '¡';
-   
+
    $flags = args2bitmask(@$flags) if (ref $flags eq 'ARRAY');
    my $hash = ($type eq '!' ? $calc90 : $calc48900)->to_base($flags);
    return $type.$CURRENT_HASH_VERSION.$hash
@@ -723,7 +719,7 @@ sub decode_pragmahash {
    ($hash, my $type) = (substr($hash, 1), substr($hash, 0, 1));
    die "Invalid hash type ($type) for pragma hash: $hash" unless ($type =~ /^[!¡]$/);
    die "Unsupported pragma hash version!" unless ($hash =~ s/^$CURRENT_HASH_VERSION//);
-   
+
    return ($type eq '!' ? $calc90 : $calc48900)->from_base($hash);
 }
 
@@ -735,19 +731,19 @@ __END__
 =encoding utf-8
 
 =head1 SYNOPSIS
- 
+
    use sanity;
    use sanity 'strictures';
    use sanity 'Modern::Perl';
-   
+
    use sanity qw(
       strictures -warnings/uninitialized/FATAL
-      NO:autovivification NO:autovivification/store 
+      NO:autovivification NO:autovivification/store
       PRINT_PRAGMA_HASH
    );
    use sanity '!0*b^Npow{8T7_yZt<?cT6/?ZCO=Y0LV_Duoc';  # Safer ASCII version
    use sanity '¡0ǲ鵆㤧뱞⡫瘑빸ን둈댬嚝⠨舁聼䮋';  # Shorter UTF8 version
- 
+
 =head1 DESCRIPTION
 
 Modern::Perl?  common::sense?  no nonsense?  use latest?
@@ -757,7 +753,7 @@ for every person to use.  These opinions turn into "personal pragmas", so that
 people don't have to type several C<use> lines of header in front of every module
 they write.
 
-Personal opinions and pragmas don't really belong in the CPAN namespace.  (It's 
+Personal opinions and pragmas don't really belong in the CPAN namespace.  (It's
 CPAN, not Personal PAN.  If you want a Personal PAN, go call Pizza Hut.)  But
 copying code on potentially hundreds of modules doesn't make sense, either.
 
@@ -765,7 +761,7 @@ That was my mentality when I had a personal opinion of my own.  Why repeat the s
 problem like everybody else?
 
 This "sanity" module attempts to level the playing field by making it a
-B<customizable> personal pragma, allowing you to both reduce the code needed and 
+B<customizable> personal pragma, allowing you to both reduce the code needed and
 still implement all of the modules/pragmas you need.
 
 As an illustration to what it's capable of, this pragma will emulate all of the
@@ -787,7 +783,7 @@ Let's start off with an example:
    use Modern::Perl;
    use sanity 'Modern::Perl';
    use sanity qw(strict warnings mro/dfs feature IO::File IO::Handle);
-   
+
    # ...these statements
    use strict;
    use warnings;
@@ -823,7 +819,7 @@ To keep that syntax, these pragmas are included with a C<NO:> prefix:
 
 This will run the C<unimport> function on these pragmas, even though sanity was called
 via the C<import> function (via C<use>).
-   
+
 =head3 Perl versions
 
 Sanity also supports Perl versions as a special kind of alias to specify minimum Perl
@@ -834,11 +830,11 @@ versions:
    use sanity 'v5.10.1';
    use sanity v5.10.1;  # as a VSTRING
    use sanity 5.10.1;   # works too
-   
+
    # Upgrade the Perl version of your favorite pragma
    use sanity qw(NO:nonsense v5.12);
-   
-Note that the version must be at least v5.8.  This should be fine for most people.  (If 
+
+Note that the version must be at least v5.8.  This should be fine for most people.  (If
 I get a ticket requesting support for a Perl version older than one released in 2002, I
 will hunt you down and break your keyboard in half.)
 
@@ -873,7 +869,7 @@ This number can be calculated using the flag C<PRINT_PRAGMA_HASH>:
       mro/c3
       Carp
    ), 'PRINT_PRAGMA_HASH');
-   
+
    # Outputs:
    # use sanity '!04[D{9Fhfqc-7m738S4HK6B#D5=v{,T$(0)F5i';  # Safer ASCII version
    # use sanity '¡05༕ቑ釩腜쥸봱楇䐍퇥熠ᾯ緻褻真堩';  # Shorter UTF8 version
@@ -896,17 +892,17 @@ from a flag, as it's part of the name of the flag, not a special modifier.
    # These two are NOT the same!
    use sanity 'NO:indirect';  # runs indirect->unimport()
    use sanity '-indirect';    # Dies, as there is no such flag/alias
-   
+
    # This runs through the strictures alias and runs autovivification->unimport()
    use sanity qw(strictures NO:autovivification);
-   
+
    # This runs through the strictures alias WITHOUT running indirect->unimport()
    use sanity qw(strictures -NO:indirect);
-   
+
    use sanity '-indirect';    # This isn't what you want...
    no  sanity 'NO:indirect';  # ...you really meant to do this...
    use indirect;              # ...but this is better
-   
+
 =head2 Special clearing of strict/warnings
 
 Since most people want exactly the strictness and warnings they specify, sanity will
@@ -914,7 +910,7 @@ clear these out first before running through the list.
 
    # This...
    use sanity qw(strict -strict/vars);
-   
+
    # ...is the same as this...
    no strict;
    use strict qw(subs refs);
@@ -924,7 +920,7 @@ fatal to older Perls.  See L<https://rt.perl.org/rt3/Ticket/Display.html?id=1129
 
 =head2 "Author" pragmas
 
-Certain pragmas really only exist to make sure the code is designed right.  These 
+Certain pragmas really only exist to make sure the code is designed right.  These
 pragmas are deemed "optional" by C<sanity>.  In other words, if the user doesn't
 have them, it will just silently ignore them and move on.  If C<sanity> thinks you're
 an author/coder of the module itself (.git/svn/$ENV checks), it will give you a
@@ -944,7 +940,7 @@ normally fatally error.
    # (autovivification probably shouldn't be here, since it actually
    # prevents autoviv, but it's generally used as an author tool.)
 
-This feature was borrowed from L<strictures> and tweaked.   
+This feature was borrowed from L<strictures> and tweaked.
 
 =head1 LIST OF FLAGS
 
@@ -1038,9 +1034,9 @@ This feature was borrowed from L<strictures> and tweaked.
       perl5i::latest
       Toolkit
       Carp
- 
+
 =head2 Other flags/aliases
-   
+
    strict/* => strict '[whatever]'        # supports all flags
    strict   => strict qw(refs subs vars)
 
@@ -1053,26 +1049,26 @@ This feature was borrowed from L<strictures> and tweaked.
    filetest
    utf8
    NO:overloading
-   
+
    warnings/*       => warnings NONFATAL => '[whatever]'  # supports all flags, multi or not
    warnings/*/FATAL => warnings    FATAL => '[whatever]'  # supports all flags; FATAL trumps NONFATAL
    warnings         => warnings NONFATAL => 'all'
    warnings/FATAL   => warnings    FATAL => 'all'
-   
+
    feature/*        => feature '[whatever]'  # supports all flags
    feature/5.##     => # similar to feature enabling via 'use v5.##'; major version only
    feature/5.9.5    => # also exists, just like feature/5.10
    feature          => feature ':all'  # not exactly, but in spirit
-   
+
    # Perl versions, described above
    v5.##.##
-   
+
    # autodie
    autodie/* => autodie ':[whatever]'  # supports all _category_ flags, like all, io, shm, etc.
                                        # (Will expand if requested, but I don't want to waste
                                        # all of that bit space right now.)
    autodie   => autodie ':default'
-   
+
    # other CORE pragmas
    bigint
    bignum
@@ -1088,7 +1084,7 @@ This feature was borrowed from L<strictures> and tweaked.
 
    # namespace cleaners
    namespace::clean       # included last; adds -except => 'meta'
-   namespace::functions   # included last                                    
+   namespace::functions   # included last
    namespace::autoclean
    namespace::sweep
 
@@ -1104,13 +1100,13 @@ This feature was borrowed from L<strictures> and tweaked.
    perl5i::2
    perl5i::3
    perl5i::latest
-   
+
    NO:indirect
    NO:indirect/global
    NO:indirect/fatal
    NO:multidimensional
    NO:bareword::filehandles
-   
+
    subs::auto
    utf8::all
    IO::File
@@ -1121,7 +1117,7 @@ This feature was borrowed from L<strictures> and tweaked.
    true
    autolocale
    Toolkit
-   
+
    Function::Parameters
    Function::Parameters/strict
    Switch::Plain
