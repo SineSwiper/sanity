@@ -1,7 +1,5 @@
 =pod
 
-=encoding utf-8
-
 =head1 NAME
 
 sanity - The ONLY meta pragma you'll ever need!
@@ -11,10 +9,10 @@ sanity - The ONLY meta pragma you'll ever need!
    use sanity;
    use sanity 'strictures';
    use sanity 'Modern::Perl';
-   
+
    use sanity qw(
       strictures -warnings/uninitialized/FATAL
-      NO:autovivification NO:autovivification/store 
+      NO:autovivification NO:autovivification/store
       PRINT_PRAGMA_HASH
    );
    use sanity '!0*b^Npow{8T7_yZt<?cT6/?ZCO=Y0LV_Duoc';  # Safer ASCII version
@@ -29,7 +27,7 @@ for every person to use.  These opinions turn into "personal pragmas", so that
 people don't have to type several C<use> lines of header in front of every module
 they write.
 
-Personal opinions and pragmas don't really belong in the CPAN namespace.  (It's 
+Personal opinions and pragmas don't really belong in the CPAN namespace.  (It's
 CPAN, not Personal PAN.  If you want a Personal PAN, go call Pizza Hut.)  But
 copying code on potentially hundreds of modules doesn't make sense, either.
 
@@ -37,11 +35,13 @@ That was my mentality when I had a personal opinion of my own.  Why repeat the s
 problem like everybody else?
 
 This "sanity" module attempts to level the playing field by making it a
-B<customizable> personal pragma, allowing you to both reduce the code needed and 
+B<customizable> personal pragma, allowing you to both reduce the code needed and
 still implement all of the modules/pragmas you need.
 
 As an illustration to what it's capable of, this pragma will emulate all of the
 other personal pragmas, most of them 100% working exactly how they do it.
+
+=encoding utf-8
 
 =head1 PARAMETERS
 
@@ -59,7 +59,7 @@ Let's start off with an example:
    use Modern::Perl;
    use sanity 'Modern::Perl';
    use sanity qw(strict warnings mro/dfs feature IO::File IO::Handle);
-   
+
    # ...these statements
    use strict;
    use warnings;
@@ -106,11 +106,11 @@ versions:
    use sanity 'v5.10.1';
    use sanity v5.10.1;  # as a VSTRING
    use sanity 5.10.1;   # works too
-   
+
    # Upgrade the Perl version of your favorite pragma
    use sanity qw(NO:nonsense v5.12);
 
-Note that the version must be at least v5.8.  This should be fine for most people.  (If 
+Note that the version must be at least v5.8.  This should be fine for most people.  (If
 I get a ticket requesting support for a Perl version older than one released in 2002, I
 will hunt you down and break your keyboard in half.)
 
@@ -145,7 +145,7 @@ This number can be calculated using the flag C<PRINT_PRAGMA_HASH>:
       mro/c3
       Carp
    ), 'PRINT_PRAGMA_HASH');
-   
+
    # Outputs:
    # use sanity '!04[D{9Fhfqc-7m738S4HK6B#D5=v{,T$(0)F5i';  # Safer ASCII version
    # use sanity '¡05༕ቑ釩腜쥸봱楇䐍퇥熠ᾯ緻褻真堩';  # Shorter UTF8 version
@@ -168,13 +168,13 @@ from a flag, as it's part of the name of the flag, not a special modifier.
    # These two are NOT the same!
    use sanity 'NO:indirect';  # runs indirect->unimport()
    use sanity '-indirect';    # Dies, as there is no such flag/alias
-   
+
    # This runs through the strictures alias and runs autovivification->unimport()
    use sanity qw(strictures NO:autovivification);
-   
+
    # This runs through the strictures alias WITHOUT running indirect->unimport()
    use sanity qw(strictures -NO:indirect);
-   
+
    use sanity '-indirect';    # This isn't what you want...
    no  sanity 'NO:indirect';  # ...you really meant to do this...
    use indirect;              # ...but this is better
@@ -186,7 +186,7 @@ clear these out first before running through the list.
 
    # This...
    use sanity qw(strict -strict/vars);
-   
+
    # ...is the same as this...
    no strict;
    use strict qw(subs refs);
@@ -196,9 +196,9 @@ fatal to older Perls.  See L<https://rt.perl.org/rt3/Ticket/Display.html?id=1129
 
 =head2 "Author" pragmas
 
-Certain pragmas really only exist to make sure the code is designed right.  These 
+Certain pragmas really only exist to make sure the code is designed right.  These
 pragmas are deemed "optional" by C<sanity>.  In other words, if the user doesn't
-have them, it will just silently ignore them and move on.  If C<sanity> thinks your
+have them, it will just silently ignore them and move on.  If C<sanity> thinks you're
 an author/coder of the module itself (.git/svn/$ENV checks), it will give you a
 warning that they are missing, but move on.
 
@@ -216,7 +216,7 @@ normally fatally error.
    # (autovivification probably shouldn't be here, since it actually
    # prevents autoviv, but it's generally used as an author tool.)
 
-This feature was borrowed from L<strictures> and tweaked.   
+This feature was borrowed from L<strictures> and tweaked.
 
 =head1 LIST OF FLAGS
 
@@ -325,26 +325,26 @@ This feature was borrowed from L<strictures> and tweaked.
    filetest
    utf8
    NO:overloading
-   
+
    warnings/*       => warnings NONFATAL => '[whatever]'  # supports all flags, multi or not
    warnings/*/FATAL => warnings    FATAL => '[whatever]'  # supports all flags; FATAL trumps NONFATAL
    warnings         => warnings NONFATAL => 'all'
    warnings/FATAL   => warnings    FATAL => 'all'
-   
+
    feature/*        => feature '[whatever]'  # supports all flags
    feature/5.##     => # similar to feature enabling via 'use v5.##'; major version only
    feature/5.9.5    => # also exists, just like feature/5.10
    feature          => feature ':all'  # not exactly, but in spirit
-   
+
    # Perl versions, described above
    v5.##.##
-   
+
    # autodie
    autodie/* => autodie ':[whatever]'  # supports all _category_ flags, like all, io, shm, etc.
                                        # (Will expand if requested, but I don't want to waste
                                        # all of that bit space right now.)
    autodie   => autodie ':default'
-   
+
    # other CORE pragmas
    bigint
    bignum
@@ -360,7 +360,7 @@ This feature was borrowed from L<strictures> and tweaked.
 
    # namespace cleaners
    namespace::clean       # included last; adds -except => 'meta'
-   namespace::functions   # included last                                    
+   namespace::functions   # included last
    namespace::autoclean
    namespace::sweep
 
@@ -376,13 +376,13 @@ This feature was borrowed from L<strictures> and tweaked.
    perl5i::2
    perl5i::3
    perl5i::latest
-   
+
    NO:indirect
    NO:indirect/global
    NO:indirect/fatal
    NO:multidimensional
    NO:bareword::filehandles
-   
+
    subs::auto
    utf8::all
    IO::File
@@ -393,6 +393,11 @@ This feature was borrowed from L<strictures> and tweaked.
    true
    autolocale
    Toolkit
+
+   Function::Parameters
+   Function::Parameters/strict
+   Switch::Plain
+   Quote::Code
 
 Am I missing something?  Let me know.
 
@@ -439,7 +444,7 @@ Brendan Byrd <BBYRD@CPAN.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2012 by Brendan Byrd.
+This software is Copyright (c) 2013 by Brendan Byrd.
 
 This is free software, licensed under:
 

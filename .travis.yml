@@ -19,7 +19,7 @@ notifications:
       channels:
          - "irc.perl.org#sanity"
       template:
-         - "%{branch}#%{build_number} by %{author}: %{message} (%{build_url})
+         - "%{branch}#%{build_number} by %{author}: %{message} (%{build_url})"
       on_success: change
       on_failure: always
       use_notice: true
