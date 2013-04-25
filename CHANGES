@@ -1,0 +1,106 @@
+Revision History for sanity
+===========================
+
+v0.96 2013-04-25
+----------------
+
+commit 49c0c97cf915ca5f21b9576871aa77a892dcb852
+Author: Brendan Byrd <Perl@ResonatorSoft.org>
+Date:   Thu Apr 25 16:59:08 2013 -0400
+
+    Remove weaver.ini (in favor of Author plugin)
+
+v0.95 2013-03-18
+----------------
+
+commit d36cafa326450af94279c18495175939641e1ae0
+Author: Brendan Byrd <Perl@ResonatorSoft.org>
+Date:   Mon Mar 18 12:15:58 2013 -0400
+
+    Release v0.95
+
+commit e0898518bfaefdc958c0ac6dcf7919a071aef5ce
+Author: Brendan Byrd <Perl@ResonatorSoft.org>
+Date:   Mon Mar 18 12:08:05 2013 -0400
+
+    Fix $author_mode to be a bit less zealous (Issue #1)
+
+commit 906e91fa7a8a78aa062bcbda7f457795c3c2023a
+Author: Brendan Byrd <Perl@ResonatorSoft.org>
+Date:   Mon Mar 18 11:57:39 2013 -0400
+
+    Add some extra modules
+    Make sure POD encoding is UTF-8, so that the SYNOPSIS shows up right
+    Fix version dep of Math::BigInt
+
+v0.94 2012-10-02
+----------------
+
+commit 0d7a99222077d96bd1387e0d0744569dec4446d1
+Author: Brendan Byrd <Perl@ResonatorSoft.org>
+Date:   Tue Oct 2 14:55:54 2012 -0400
+
+    Release v0.94
+
+commit 4fbe24b1e601ce180606b65bbb6ea774075072b7
+Author: Brendan Byrd <Perl@ResonatorSoft.org>
+Date:   Tue Oct 2 14:07:40 2012 -0400
+
+    Third strike for namespace::sweep
+
+v0.93 2012-07-24
+----------------
+
+commit b8644d9f8e63eb79c30a641641c6fdb732c76d99
+Author: Brendan Byrd <Perl@ResonatorSoft.org>
+Date:   Tue Jul 24 15:37:30 2012 -0400
+
+    Release v0.93
+
+commit a61f236c768455b90c9dfb1637600a930fe0ec6e
+Author: Brendan Byrd <Perl@ResonatorSoft.org>
+Date:   Tue Jul 24 15:36:02 2012 -0400
+
+    Add weaver stuff
+    Fix sanity to use namespace::sweep, like it's suppose to
+
+v0.92 2012-07-17
+----------------
+
+commit 426420f583f043d87de893be77e34104322c743a
+Author: Brendan Byrd <Perl@ResonatorSoft.org>
+Date:   Tue Jul 17 23:28:56 2012 -0400
+
+    Release v0.92
+
+commit 7ffeb8efdd320db4ae4ad17eba7ffadd48a57af8
+Author: Brendan Byrd <Perl@ResonatorSoft.org>
+Date:   Tue Jul 17 23:07:58 2012 -0400
+
+    Fix overzealous replacement of switch->flag in POD
+
+v0.91 2012-07-17
+----------------
+
+commit 0f59169b76672ccbafa9b623d6be0d8fd68a0053
+Author: Brendan Byrd <Perl@ResonatorSoft.org>
+Date:   Tue Jul 17 19:28:44 2012 -0400
+
+    Release v0.91
+
+commit 4cc5251e157c73fe39c2026b1bce2fb8ca6b4482
+Author: Brendan Byrd <Perl@ResonatorSoft.org>
+Date:   Tue Jul 17 14:29:50 2012 -0400
+
+    Fix weird BOM issue with sanity.pm, which was causing an undetected
+       package in Module::Metadata
+
+commit 38e5f11d1eaaca25f42a26036c921cd7de78864f
+Author: Brendan Byrd <Perl@ResonatorSoft.org>
+Date:   Mon Jul 16 14:27:47 2012 -0400
+
+    dist.ini adjustments
+
+===================================
+End of changes in the last 365 days
+===================================
