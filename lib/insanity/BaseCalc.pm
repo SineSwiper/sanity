@@ -1,5 +1,5 @@
 package  # hide from PAUSE
-   sanity::BaseCalc;
+   insanity::BaseCalc;
 
 # VERSION
 # ABSTRACT: DO NOT USE!

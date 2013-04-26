@@ -10,8 +10,8 @@ _build/
 .build/
 blib/
 inc/
-sanity-*/
-sanity-*.tar.*
+insanity-*/
+insanity-*.tar.*
 pm_to_blib
 t/var/
 .*.sw?
