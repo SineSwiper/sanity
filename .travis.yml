@@ -17,7 +17,7 @@ script:
 notifications:
    irc:
       channels:
-         - "irc.perl.org#sanity"
+         - "irc.perl.org#insanity"
       template:
          - "%{branch}#%{build_number} by %{author}: %{message} (%{build_url})"
       on_success: change

@@ -1,4 +1,4 @@
-package sanity;
+package insanity;
 
 # VERSION
 # ABSTRACT: The ONLY meta pragma you'll ever need!
@@ -17,7 +17,7 @@ no warnings qw(uninitialized);
 
 # Need this for some of the bit math
 use bigint;            ### LAZY: I should probably be using Math::BigInt... ###
-use sanity::BaseCalc;  ### FIXME: Temporary until Math::BaseCalc fix (RT #77198) ###
+use insanity::BaseCalc;  ### FIXME: Temporary until Math::BaseCalc fix (RT #77198) ###
 
 use List::MoreUtils qw(any all none uniq);
 
@@ -71,8 +71,8 @@ my $base48900 = [  # PHEAR THIS!
       0xffc2..0xffc7, 0xffca..0xffcf, 0xffd2..0xffd7, 0xffda..0xffdc, 0xffe0..0xffe6, 0xffe8..0xffee,
    )
 ];
-my $calc90    = sanity::BaseCalc->new(digits => $base90);
-my $calc48900 = sanity::BaseCalc->new(digits => $base48900);
+my $calc90    = insanity::BaseCalc->new(digits => $base90);
+my $calc48900 = insanity::BaseCalc->new(digits => $base48900);
 
 my @FLAGS = (
    # Perl.h HINTS (Bits 0-31)
@@ -384,7 +384,7 @@ my %ALIAS = (
       -warnings/unopened/FATAL
       utf8
    )],
-   'sanity'   => [qw(
+   'insanity'   => [qw(
       v5.10.1 utf8 open/utf8 open/std mro/c3 strict/subs strict/vars feature
       warnings/all/FATAL -warnings/uninitialized/FATAL
       NO:autovivification NO:autovivification/store NO:autovivification/strict
@@ -652,7 +652,7 @@ sub args2bitmask {
          $mn ||= 0;  # bigint/BigInt has weird problems with undef
 
          my $bitmask8 = ($mj-8) * 16 + $mn + 1;
-         die "Perl version flags for sanity must be at least 5.8.0" if ($bitmask8 <= 0);
+         die "Perl version flags for insanity must be at least 5.8.0" if ($bitmask8 <= 0);
 
          foreach my $bit8 (0..7) {
             push @args, 'BITMAP:perl/'.$bit8 if ($bitmask8 & 1 << $bit8);
@@ -667,7 +667,7 @@ sub args2bitmask {
       elsif ($flag =~ /^\xC2\xA1/) {
          # This could happen if the user sent in a UTF-8 string without saying 'use utf8;' or
          # any identifying BOFs, etc., saying that the program is in UTF-8.  Of course, the
-         # catch-22 is that they are expecting _sanity_ to enable utf8 for them, so we need to
+         # catch-22 is that they are expecting _insanity_ to enable utf8 for them, so we need to
          # convert the string manually.
          require Encode;
          push @args, Encode::decode('utf8', $flag);
@@ -723,7 +723,7 @@ sub decode_pragmahash {
    return ($type eq '!' ? $calc90 : $calc48900)->from_base($hash);
 }
 
-# warnings void + bigint + 1; + perl sanity.pm = "Useless use of a constant (1) in void context"
+# warnings void + bigint + 1; + perl insanity.pm = "Useless use of a constant (1) in void context"
 1;
 
 __END__
@@ -732,17 +732,17 @@ __END__
 
 =head1 SYNOPSIS
 
-   use sanity;
-   use sanity 'strictures';
-   use sanity 'Modern::Perl';
+   use insanity;
+   use insanity 'strictures';
+   use insanity 'Modern::Perl';
 
-   use sanity qw(
+   use insanity qw(
       strictures -warnings/uninitialized/FATAL
       NO:autovivification NO:autovivification/store
       PRINT_PRAGMA_HASH
    );
-   use sanity '!0*b^Npow{8T7_yZt<?cT6/?ZCO=Y0LV_Duoc';  # Safer ASCII version
-   use sanity '¡0ǲ鵆㤧뱞⡫瘑빸ን둈댬嚝⠨舁聼䮋';  # Shorter UTF8 version
+   use insanity '!0*b^Npow{8T7_yZt<?cT6/?ZCO=Y0LV_Duoc';  # Safer ASCII version
+   use insanity '¡0ǲ鵆㤧뱞⡫瘑빸ን둈댬嚝⠨舁聼䮋';  # Shorter UTF8 version
 
 =head1 DESCRIPTION
 
@@ -760,7 +760,7 @@ copying code on potentially hundreds of modules doesn't make sense, either.
 That was my mentality when I had a personal opinion of my own.  Why repeat the same
 problem like everybody else?
 
-This "sanity" module attempts to level the playing field by making it a
+This "insanity" module attempts to level the playing field by making it a
 B<customizable> personal pragma, allowing you to both reduce the code needed and
 still implement all of the modules/pragmas you need.
 
@@ -781,8 +781,8 @@ Let's start off with an example:
 
    # These three statements do the same thing as...
    use Modern::Perl;
-   use sanity 'Modern::Perl';
-   use sanity qw(strict warnings mro/dfs feature IO::File IO::Handle);
+   use insanity 'Modern::Perl';
+   use insanity qw(strict warnings mro/dfs feature IO::File IO::Handle);
 
    # ...these statements
    use strict;
@@ -803,7 +803,7 @@ call.
 
 You can turn off flags in the statement:
 
-   use sanity qw(Modern::Perl -mro/dfs);
+   use insanity qw(Modern::Perl -mro/dfs);
 
 This does the same thing as above, except it doesn't import the C<mro> pragma.  You
 can negate any flag, including combined aliases, as long as it makes sense.  In other
@@ -814,10 +814,10 @@ words, you need a positive included before you can negate something.
 Some pragmas work by using the C<B<unimport>> function, so that the English makes sense.
 To keep that syntax, these pragmas are included with a C<NO:> prefix:
 
-   use sanity 'NO:multidimensional';
-   use sanity 'NO:indirect/FATAL';
+   use insanity 'NO:multidimensional';
+   use insanity 'NO:indirect/FATAL';
 
-This will run the C<unimport> function on these pragmas, even though sanity was called
+This will run the C<unimport> function on these pragmas, even though insanity was called
 via the C<import> function (via C<use>).
 
 =head3 Perl versions
@@ -827,12 +827,12 @@ versions:
 
    # These are all the same:
    use v5.10.1;
-   use sanity 'v5.10.1';
-   use sanity v5.10.1;  # as a VSTRING
-   use sanity 5.10.1;   # works too
+   use insanity 'v5.10.1';
+   use insanity v5.10.1;  # as a VSTRING
+   use insanity 5.10.1;   # works too
 
    # Upgrade the Perl version of your favorite pragma
-   use sanity qw(NO:nonsense v5.12);
+   use insanity qw(NO:nonsense v5.12);
 
 Note that the version must be at least v5.8.  This should be fine for most people.  (If
 I get a ticket requesting support for a Perl version older than one released in 2002, I
@@ -840,9 +840,9 @@ will hunt you down and break your keyboard in half.)
 
 =head3 The Default
 
-What does C<sanity> do without any parameters?  Why my personal preference, of course :)
+What does C<insanity> do without any parameters?  Why my personal preference, of course :)
 It's listed in the C<meta pragma> section of the L<LIST OF FLAGS> below.  I detail the
-reasons behind my choices L<here|sanity::sanity>.
+reasons behind my choices L<here|insanity::insanity>.
 
 =head2 Hashes
 
@@ -854,7 +854,7 @@ bitmap can be compressed into a large ASCII (or UTF-8) "number".
 This number can be calculated using the flag C<PRINT_PRAGMA_HASH>:
 
    # This is merely the definition of uni::perl
-   use sanity (qw(
+   use insanity (qw(
       v5.10 strict feature/5.10
    ), (
       map { "warnings/$_/FATAL" } qw(closed threads internal debugging pack substr malloc
@@ -871,8 +871,8 @@ This number can be calculated using the flag C<PRINT_PRAGMA_HASH>:
    ), 'PRINT_PRAGMA_HASH');
 
    # Outputs:
-   # use sanity '!04[D{9Fhfqc-7m738S4HK6B#D5=v{,T$(0)F5i';  # Safer ASCII version
-   # use sanity '¡05༕ቑ釩腜쥸봱楇䐍퇥熠ᾯ緻褻真堩';  # Shorter UTF8 version
+   # use insanity '!04[D{9Fhfqc-7m738S4HK6B#D5=v{,T$(0)F5i';  # Safer ASCII version
+   # use insanity '¡05༕ቑ釩腜쥸봱楇䐍퇥熠ᾯ緻褻真堩';  # Shorter UTF8 version
 
 You can use that hash as the output illustrates without having to type out the entire big
 set of commands or flags.
@@ -890,26 +890,26 @@ A C<NO:> flag is NOT the same as negating a flag!  You also cannot remove the C<
 from a flag, as it's part of the name of the flag, not a special modifier.
 
    # These two are NOT the same!
-   use sanity 'NO:indirect';  # runs indirect->unimport()
-   use sanity '-indirect';    # Dies, as there is no such flag/alias
+   use insanity 'NO:indirect';  # runs indirect->unimport()
+   use insanity '-indirect';    # Dies, as there is no such flag/alias
 
    # This runs through the strictures alias and runs autovivification->unimport()
-   use sanity qw(strictures NO:autovivification);
+   use insanity qw(strictures NO:autovivification);
 
    # This runs through the strictures alias WITHOUT running indirect->unimport()
-   use sanity qw(strictures -NO:indirect);
+   use insanity qw(strictures -NO:indirect);
 
-   use sanity '-indirect';    # This isn't what you want...
-   no  sanity 'NO:indirect';  # ...you really meant to do this...
+   use insanity '-indirect';    # This isn't what you want...
+   no  insanity 'NO:indirect';  # ...you really meant to do this...
    use indirect;              # ...but this is better
 
 =head2 Special clearing of strict/warnings
 
-Since most people want exactly the strictness and warnings they specify, sanity will
+Since most people want exactly the strictness and warnings they specify, insanity will
 clear these out first before running through the list.
 
    # This...
-   use sanity qw(strict -strict/vars);
+   use insanity qw(strict -strict/vars);
 
    # ...is the same as this...
    no strict;
@@ -921,8 +921,8 @@ fatal to older Perls.  See L<https://rt.perl.org/rt3/Ticket/Display.html?id=1129
 =head2 "Author" pragmas
 
 Certain pragmas really only exist to make sure the code is designed right.  These
-pragmas are deemed "optional" by C<sanity>.  In other words, if the user doesn't
-have them, it will just silently ignore them and move on.  If C<sanity> thinks you're
+pragmas are deemed "optional" by C<insanity>.  In other words, if the user doesn't
+have them, it will just silently ignore them and move on.  If C<insanity> thinks you're
 an author/coder of the module itself (.git/svn/$ENV checks), it will give you a
 warning that they are missing, but move on.
 
@@ -1002,7 +1002,7 @@ This feature was borrowed from L<strictures> and tweaked.
       open (:utf8 :std)
       mro 'c3'
       Carp
-   sanity:
+   insanity:
       v5.10.1
       utf8
       open (:utf8 :std)
@@ -1016,7 +1016,7 @@ This feature was borrowed from L<strictures> and tweaked.
       no indirect 'fatal'
       no multidimensional
    perl5i::0 / 1 / 2 / latest:
-      [the real module] (the pragma is too insane to try to duplicate here)
+      [the real module] (the pragma is too sane to try to duplicate here)
    Acme::Very::Modern::Perl:  (a joke, but it's still here all the same)
       strict
       warnings
@@ -1127,4 +1127,4 @@ Am I missing something?  Let me know.
 
 =head1 TODO
 
-Actually need to write sanity::sanity POD.
+Actually need to write insanity::insanity POD.
