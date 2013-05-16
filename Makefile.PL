@@ -23,7 +23,7 @@ my %WriteMakefileArgs = (
   },
   "TEST_REQUIRES" => {
     "Test::CheckDeps" => "0.002",
-    "Test::UseAllModules" => "0.10"
+    "Test::More" => "0.94"
   },
   "VERSION" => "0.96",
   "test" => {

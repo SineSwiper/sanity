@@ -5,15 +5,14 @@ MANIFEST
 META.json
 META.yml
 Makefile.PL
+README
 README.html
-README.pod
 dist.ini
 lib/sanity.pm
 lib/sanity/BaseCalc.pm
 printuni.pl
 t/00-check-deps.t
 t/00-compile.t
-t/00-load.t
 t/000-report-versions-tiny.t
 t/basic.t
 xt/author/test-eol.t
