@@ -43,8 +43,6 @@ still implement all of the modules/pragmas you need.
 As an illustration to what it's capable of, this pragma will emulate all of the
 other personal pragmas, most of them 100% working exactly how they do it.
 
-=encoding utf-8
-
 =head1 PARAMETERS
 
 Sanity's parameters fall into three types: flags, aliases, and hashes.  (Oh my!)
@@ -288,7 +286,7 @@ This feature was borrowed from L<strictures> and tweaked.
       strict qw(subs vars)
       no strict 'refs'
       warnings FATAL => 'all'
-      no warnings qw(uninitialized)
+      no warnings qw(uninitialized experimental::smartmatch)
       feature
       no autovivification qw(fetch exists delete store strict)
       no indirect 'fatal'
@@ -442,11 +440,11 @@ Please report any bugs or feature requests via L<https://github.com/SineSwiper/s
 
 =head1 AUTHOR
 
-Brendan Byrd <BBYRD@CPAN.org>
+Brendan Byrd <bbyrd@cpan.org>
 
 =head1 CONTRIBUTOR
 
-Brendan Byrd <Perl@ResonatorSoft.org>
+Graham Knop <haarg@haarg.org>
 
 =head1 COPYRIGHT AND LICENSE
 
