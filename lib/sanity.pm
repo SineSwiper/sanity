@@ -1,6 +1,6 @@
-package sanity;
+﻿package sanity;
 
-our $VERSION = '0.96'; # VERSION
+our $VERSION = '0.97'; # VERSION
 # ABSTRACT: The ONLY meta pragma you'll ever need!
 
 # use feature has to be difficult...
@@ -166,11 +166,11 @@ my @FLAGS = (
       warnings/non_unicode   MULTI:warnings/non_unicode/FATAL
       warnings/nonchar       MULTI:warnings/nonchar/FATAL
       warnings/surrogate     MULTI:warnings/surrogate/FATAL
-      XXX:warnings/51        XXX:warnings/51/FATAL
-      XXX:warnings/52        XXX:warnings/52/FATAL
-      XXX:warnings/53        XXX:warnings/53/FATAL
-      XXX:warnings/54        XXX:warnings/54/FATAL
-      XXX:warnings/55        XXX:warnings/55/FATAL
+      MULTI:warnings/experimental           MULTI:warnings/experimental/FATAL
+      warnings/experimental::lexical_subs   MULTI:warnings/experimental::lexical_subs/FATAL
+      warnings/experimental::lexical_topic  MULTI:warnings/experimental::lexical_topic/FATAL
+      warnings/experimental::regex_sets     MULTI:warnings/experimental::regex_sets/FATAL
+      warnings/experimental::smartmatch     MULTI:warnings/experimental::smartmatch/FATAL
       XXX:warnings/56        XXX:warnings/56/FATAL
       XXX:warnings/57        XXX:warnings/57/FATAL
       XXX:warnings/58        XXX:warnings/58/FATAL
@@ -301,23 +301,26 @@ my @FLAGS = (
    ),
 );
 my %FLAGS;  # namespace abuse I know...
-$FLAGS{$FLAGS[$_]} = $_ for (0 .. @FLAGS-1);
+$FLAGS{$FLAGS[$_]} = $_ for (0 .. $#FLAGS);
 
 my %ALIAS = (
    strict => [qw(strict/refs strict/subs strict/vars)],
 
-   'warnings/all'          => '13838149588118164180843900702222377287680',  # bit_reverse(0x55555555555555555555555515 >> 2) << 32
-   'warnings/all/FATAL'    => '20757224382177246271265851053333565931520',  # bit_reverse(0xFFFFFFFFFFFFFFFFFFFFFFFF3F >> 2) << 32
-   'warnings/io'           =>                         '47896925529178112',  # bit_reverse(0x00545500000000000000000000 >> 2) << 32
-   'warnings/io/FATAL'     =>                         '71845388293767168',  # bit_reverse(0x00FCFF00000000000000000000 >> 2) << 32
-   'warnings/severe'       =>               '193626470530621193051963392',  # bit_reverse(0x00000000005405000000000000 >> 2) << 32
-   'warnings/severe/FATAL' =>               '290439705795931789577945088',  # bit_reverse(0x0000000000FC0F000000000000 >> 2) << 32
-   'warnings/syntax'       =>     '2661876957783324321004889844461076480',  # bit_reverse(0x00000000000000555515004000 >> 2) << 32
-   'warnings/syntax/FATAL' =>     '1334359445105154735699720646130925568',  # bit_reverse(0x00000000000000FFFF3F008000 >> 2) << 32
-   'warnings/utf8'         => '13781435860298007770266671600986612563968',  # bit_reverse(0x00000000000000000000000115 >> 2) << 32
-   'warnings/utf8/FATAL'   => '20672153790447011655400007401479918845952',  # bit_reverse(0x0000000000000000000000033F >> 2) << 32
-   'warnings'              => 'warnings/all',
-   'warnings/FATAL'        => 'warnings/all/FATAL',
+   # See corpus/warnbits.pl for the bitwise math
+   'warnings/all'                =>  '7433581732843541047178572757549452403671040',  # 0x55555555555555555555555555550000
+   'warnings/all/FATAL'          => '22300745198530623141535718272648357211013120',  # 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000
+   'warnings/io'                 =>                            '24017731997138944',  # 0x00545500000000000000000000000000
+   'warnings/io/FATAL'           =>                            '72053195991416832',  # 0x00FCFF00000000000000000000000000
+   'warnings/severe'             =>                    '6441307882634196071481344',  # 0x00000000005405000000000000000000
+   'warnings/severe/FATAL'       =>                   '19323923647902588214444032',  # 0x0000000000FC0F000000000000000000
+   'warnings/syntax'             =>       '85071024421536332098205581043061227520',  # 0x00000000000000555515004000000000
+   'warnings/syntax/FATAL'       =>      '170142481534374380428773091271241629696',  # 0x00000000000000FFFF3F008000000000
+   'warnings/utf8'               =>     '7147258933335492648603770563127412785152',  # 0x00000000000000000000000115000000
+   'warnings/utf8/FATAL'         =>    '21441776800006477945811311689382238355456',  # 0x0000000000000000000000033F000000
+   'warnings/experimental'       =>  '7426322375682561026624687432590909446815744',  # 0x00000000000000000000000040550000
+   'warnings/experimental/FATAL' => '22278967127047683079874062297772728340447232',  # 0x000000000000000000000000C0FF0000
+   'warnings'                    => 'warnings/all',
+   'warnings/FATAL'              => 'warnings/all/FATAL',
 
    'feature/unicode'         => [qw(MULTI:feature/unicode feature/HINT/unicode)],
    'feature/unicode_strings' => 'feature/unicode',
@@ -386,7 +389,7 @@ my %ALIAS = (
    )],
    'sanity'   => [qw(
       v5.10.1 utf8 open/utf8 open/std mro/c3 strict/subs strict/vars feature
-      warnings/all/FATAL -warnings/uninitialized/FATAL
+      warnings/all/FATAL -warnings/uninitialized/FATAL -warnings/experimental::smartmatch/FATAL
       NO:autovivification NO:autovivification/store NO:autovivification/strict
       NO:indirect/fatal NO:multidimensional
    )],
@@ -418,7 +421,9 @@ sub import {
    my ($class, @args) = @_;
 
    # See if we need to encode a pragma hash
-   my $print_hash = find_and_remove(qr/^PRINT_PRAGMA_HASH$/, \@args);
+   my $print_hash  = find_and_remove(qr/^PRINT_PRAGMA_HASH$/, \@args);
+   # ... or print flags
+   my $print_flags = find_and_remove(qr/^PRINT_FLAGS$/, \@args);
 
    @args = ($class) unless (@args);
    unshift @args, $class if (all { /^-/ } @args);  # don't be all negative and such
@@ -426,9 +431,14 @@ sub import {
 
    if ($print_hash) {
       binmode STDOUT, ':utf8';
+      print "use $class '".encode_pragmahash(\@args, '0')."';  # Overly long decimal version\n";
       print "use $class '".encode_pragmahash(\@args, '!')."';  # Safer ASCII version\n";
       print "use $class '".encode_pragmahash(\@args, '¡')."';  # Shorter UTF8 version\n";
       ### TODO: should try to resolve back to the closest alias ###
+      exit;
+   }
+   if ($print_flags) {
+      print join("\n", @args)."\n";
       exit;
    }
 
@@ -706,9 +716,10 @@ my $CURRENT_HASH_VERSION = 0;
 
 sub encode_pragmahash {
    my ($flags, $type) = @_;
-   $type ||= '¡';
+   $type //= '¡';
 
    $flags = args2bitmask(@$flags) if (ref $flags eq 'ARRAY');
+   return $flags if ($type eq '0');
    my $hash = ($type eq '!' ? $calc90 : $calc48900)->to_base($flags);
    return $type.$CURRENT_HASH_VERSION.$hash
 }
@@ -724,7 +735,7 @@ sub decode_pragmahash {
 }
 
 # warnings void + bigint + 1; + perl sanity.pm = "Useless use of a constant (1) in void context"
-1;
+42;
 
 __END__
 
@@ -772,8 +783,6 @@ still implement all of the modules/pragmas you need.
 
 As an illustration to what it's capable of, this pragma will emulate all of the
 other personal pragmas, most of them 100% working exactly how they do it.
-
-=encoding utf-8
 
 =head1 PARAMETERS
 
@@ -1018,7 +1027,7 @@ This feature was borrowed from L<strictures> and tweaked.
       strict qw(subs vars)
       no strict 'refs'
       warnings FATAL => 'all'
-      no warnings qw(uninitialized)
+      no warnings qw(uninitialized experimental::smartmatch)
       feature
       no autovivification qw(fetch exists delete store strict)
       no indirect 'fatal'
@@ -1172,11 +1181,11 @@ Please report any bugs or feature requests via L<https://github.com/SineSwiper/s
 
 =head1 AUTHOR
 
-Brendan Byrd <BBYRD@CPAN.org>
+Brendan Byrd <bbyrd@cpan.org>
 
 =head1 CONTRIBUTOR
 
-Brendan Byrd <Perl@ResonatorSoft.org>
+Graham Knop <haarg@haarg.org>
 
 =head1 COPYRIGHT AND LICENSE
 

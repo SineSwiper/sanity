@@ -10,7 +10,7 @@ use ExtUtils::MakeMaker 6.30;
 
 my %WriteMakefileArgs = (
   "ABSTRACT" => "The ONLY meta pragma you'll ever need!",
-  "AUTHOR" => "Brendan Byrd <BBYRD\@CPAN.org>",
+  "AUTHOR" => "Brendan Byrd <bbyrd\@cpan.org>",
   "BUILD_REQUIRES" => {},
   "CONFIGURE_REQUIRES" => {},
   "DISTNAME" => "sanity",
@@ -25,7 +25,7 @@ my %WriteMakefileArgs = (
     "Test::CheckDeps" => "0.002",
     "Test::More" => "0.94"
   },
-  "VERSION" => "0.96",
+  "VERSION" => "0.97",
   "test" => {
     "TESTS" => "t/*.t"
   }

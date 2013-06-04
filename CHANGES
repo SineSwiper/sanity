@@ -1,8 +1,50 @@
 Revision History for sanity
 ===========================
 
+v0.97 2013-06-03
+----------------
+
+commit f4b4af1cd4bd50d0c0f3829d7a2c469e02ea2c7d
+Author: Brendan Byrd <Perl@ResonatorSoft.org>
+Date:   Mon Jun 3 21:41:39 2013 -0400
+
+    Fix exec bits
+
+commit 376b8e0738dbc3bf86152feb4a7ac530cb9d06ec
+Author: Brendan Byrd <Perl@ResonatorSoft.org>
+Date:   Sun Jun 2 18:54:48 2013 -0400
+
+    Add in new 'experimental' warning flags
+    Fix warning alias bitmasks
+    Add -warnings/experimental::smartmatch to sanity pragma
+
+commit 273dd26fe213510d780798547e8b506c8603e074
+Merge: 225fa24 61bfb36
+Author: Brendan Byrd <Perl@ResonatorSoft.org>
+Date:   Thu May 16 19:23:44 2013 -0400
+
+    Merge branch 'master' of github.com:SineSwiper/sanity
+
+commit eca336bef6132e30a33d46272e065f2da5d07d71
+Author: Graham Knop <haarg@haarg.org>
+Date:   Fri Apr 26 10:00:22 2013 -0400
+
+    add missing newline at end of file
+
+commit 12b1cc47ed614f0150e46a0e1749027a9bd095d5
+Author: Graham Knop <haarg@haarg.org>
+Date:   Fri Apr 26 09:59:50 2013 -0400
+
+    remove pod encoding from .pm so Pod::Weaver can handle it
+
 v0.96 2013-05-16
 ----------------
+
+commit 225fa2401c2eefebf5629e512c3535f1558c9619
+Author: Brendan Byrd <Perl@ResonatorSoft.org>
+Date:   Thu May 16 19:22:22 2013 -0400
+
+    Release v0.96
 
 commit 49c0c97cf915ca5f21b9576871aa77a892dcb852
 Author: Brendan Byrd <Perl@ResonatorSoft.org>

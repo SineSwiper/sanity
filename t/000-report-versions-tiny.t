@@ -49,7 +49,6 @@ sub pmver {
 }
 
 eval { $v .= pmver('Carp','any version') };
-eval { $v .= pmver('IO::All','any version') };
 eval { $v .= pmver('Import::Into','1.001000') };
 eval { $v .= pmver('List::MoreUtils','0.23') };
 eval { $v .= pmver('Test::CheckDeps','0.002') };
@@ -66,7 +65,6 @@ eval { $v .= pmver('namespace::autoclean','any version') };
 eval { $v .= pmver('namespace::clean','any version') };
 eval { $v .= pmver('namespace::functions','any version') };
 eval { $v .= pmver('namespace::sweep','any version') };
-eval { $v .= pmver('perl5i','any version') };
 eval { $v .= pmver('subs::auto','any version') };
 eval { $v .= pmver('true','any version') };
 eval { $v .= pmver('utf8::all','any version') };

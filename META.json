@@ -1,7 +1,7 @@
 {
    "abstract" : "The ONLY meta pragma you'll ever need!",
    "author" : [
-      "Brendan Byrd <BBYRD@CPAN.org>"
+      "Brendan Byrd <bbyrd@cpan.org>"
    ],
    "dynamic_config" : 0,
    "generated_by" : "Dist::Zilla version 4.300034, CPAN::Meta::Converter version 2.130880",
@@ -31,7 +31,6 @@
       "runtime" : {
          "recommends" : {
             "Carp" : "0",
-            "IO::All" : "0",
             "Toolkit" : "0",
             "autolocale" : "0",
             "autovivification" : "0",
@@ -43,7 +42,6 @@
             "namespace::clean" : "0",
             "namespace::functions" : "0",
             "namespace::sweep" : "0",
-            "perl5i" : "0",
             "subs::auto" : "0",
             "true" : "0",
             "utf8::all" : "0",
@@ -62,12 +60,7 @@
          }
       }
    },
-   "provides" : {
-      "sanity" : {
-         "file" : "lib/sanity.pm",
-         "version" : "0.96"
-      }
-   },
+   "provides" : {},
    "release_status" : "stable",
    "resources" : {
       "bugtracker" : {
@@ -81,7 +74,7 @@
       },
       "x_irc" : "irc://irc.perl.org/#sanity"
    },
-   "version" : "0.96",
+   "version" : "0.97",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.014002"
@@ -413,7 +406,7 @@
       }
    },
    "x_contributors" : [
-      "Brendan Byrd <Perl@ResonatorSoft.org>"
+      "Graham Knop <haarg@haarg.org>"
    ]
 }
 

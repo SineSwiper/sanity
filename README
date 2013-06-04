@@ -275,7 +275,7 @@ LIST OF FLAGS
           strict qw(subs vars)
           no strict 'refs'
           warnings FATAL => 'all'
-          no warnings qw(uninitialized)
+          no warnings qw(uninitialized experimental::smartmatch)
           feature
           no autovivification qw(fetch exists delete store strict)
           no indirect 'fatal'
@@ -417,10 +417,10 @@ SUPPORT
     <https://github.com/SineSwiper/sanity/issues>.
 
 AUTHOR
-    Brendan Byrd <BBYRD@CPAN.org>
+    Brendan Byrd <bbyrd@cpan.org>
 
 CONTRIBUTOR
-    Brendan Byrd <Perl@ResonatorSoft.org>
+    Graham Knop <haarg@haarg.org>
 
 COPYRIGHT AND LICENSE
     This software is Copyright (c) 2013 by Brendan Byrd.

@@ -1,7 +1,7 @@
 package  # hide from PAUSE
    sanity::BaseCalc;
 
-our $VERSION = '0.96'; # VERSION
+our $VERSION = '0.97'; # VERSION
 # ABSTRACT: DO NOT USE!
 
 use strict;
@@ -218,11 +218,11 @@ site near you, or see L<https://metacpan.org/module/sanity/>.
 
 =head1 AUTHOR
 
-Brendan Byrd <BBYRD@CPAN.org>
+Brendan Byrd <bbyrd@cpan.org>
 
 =head1 CONTRIBUTOR
 
-Brendan Byrd <Perl@ResonatorSoft.org>
+Graham Knop <haarg@haarg.org>
 
 =head1 COPYRIGHT AND LICENSE
 
