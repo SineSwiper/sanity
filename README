@@ -359,6 +359,8 @@ LIST OF FLAGS
        criticism/*
        criticism   => criticism 'gentle'
 
+       experimental/*
+
        perl5i::0
        perl5i::1
        perl5i::2

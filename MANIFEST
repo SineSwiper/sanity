@@ -14,7 +14,7 @@ lib/sanity.pm
 lib/sanity/BaseCalc.pm
 t/00-check-deps.t
 t/00-compile.t
-t/000-report-versions-tiny.t
+t/00-report-prereqs.t
 t/basic.t
 xt/author/test-eol.t
 xt/release/check-manifest.t

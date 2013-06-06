@@ -1,6 +1,17 @@
 Revision History for sanity
 ===========================
 
+v1.00 2013-06-06
+----------------
+
+commit 227f8493749157743b2595de7440053df855b468
+Author: Brendan Byrd <Perl@ResonatorSoft.org>
+Date:   Thu Jun 6 19:26:01 2013 -0400
+
+    Fix smartmatch warnings
+    Update feature bits
+    Add experimental pragma to list
+
 v0.97 2013-06-03
 ----------------
 
