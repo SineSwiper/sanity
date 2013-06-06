@@ -14,6 +14,7 @@ no strict 'refs';
 #use feature ($VER_PACK);
 use warnings FATAL => 'all';
 no warnings qw(uninitialized);
+no if $] >= 5.017011, warnings => 'experimental::smartmatch';
 
 # Need this for some of the bit math
 use bigint;            ### LAZY: I should probably be using Math::BigInt... ###
@@ -103,10 +104,10 @@ my @FLAGS = (
       filetest
       utf8
       NO:overloading
-      XXX:HINT_0x02000000
-      XXX:HINT_0x04000000
-      XXX:HINT_0x08000000
-      XXX:HINT_0x10000000
+      XXX:RE_FLAGS
+      XXX:FEATURE_BIT1
+      XXX:FEATURE_BIT2
+      XXX:FEATURE_BIT3
       XXX:HINT_0x20000000
       XXX:HINT_0x40000000
       XXX:HINT_0x80000000
@@ -188,12 +189,12 @@ my @FLAGS = (
       feature/say
       feature/state
       MULTI:feature/unicode
-      XXX:feature/5
-      XXX:feature/6
-      XXX:feature/7
-      XXX:feature/8
-      XXX:feature/9
-      XXX:feature/10
+      feature/fc
+      feature/evalbytes
+      feature/array_base
+      feature/current_sub
+      feature/lexical_subs
+      feature/unicode_eval
       XXX:feature/11
       XXX:feature/12
       XXX:feature/13
@@ -322,18 +323,32 @@ my %ALIAS = (
    'warnings'                    => 'warnings/all',
    'warnings/FATAL'              => 'warnings/all/FATAL',
 
+   # XXX: 5.18 has array_base and they "backported" it to older versions.
+   # We don't use it, but that's not totally accurate of the feature_bundles.
+   # It's a barely used $[ variable, anyway...
+
    'feature/unicode'         => [qw(MULTI:feature/unicode feature/HINT/unicode)],
    'feature/unicode_strings' => 'feature/unicode',
    'feature/5.9.5'           => 'feature/5.10',
-   'feature/5.10'            => [qw(feature/say feature/state feature/switch)],
-   'feature/5.11'            => [qw(feature/5.10 feature/unicode)],
+   'feature/5.10'            => [map { "feature/$_" } qw(say state switch)],  # 5.18 has array_base, but not in 5.10's version
+   'feature/5.11'            => [map { "feature/$_" } qw(5.10 unicode)],      
    'feature/5.12'            => 'feature/5.11',
    'feature/5.13'            => 'feature/5.11',
    'feature/5.14'            => 'feature/5.11',
-   'feature/5.15'            => 'feature/5.11',
-   'feature/5.16'            => 'feature/5.11',
+   'feature/5.15'            => [map { "feature/$_" } qw(current_sub evalbytes fc say state switch unicode_eval unicode_strings)],
+   'feature/5.16'            => 'feature/5.15',
+   'feature/5.17'            => 'feature/5.15',
+   'feature/5.18'            => 'feature/5.15',
+   'feature/5.19'            => 'feature/5.15',
+   'feature/5.20'            => 'feature/5.15',
    feature                   => 'feature/^V',
 
+    "5.10"    => [qw(array_base say state switch)],
+    "5.11"    => [qw(array_base say state switch unicode_strings)],
+    "5.15"    => [qw(current_sub evalbytes fc say state switch unicode_eval unicode_strings)],
+    "all"     => [qw(array_base current_sub evalbytes fc lexical_subs say state switch unicode_eval unicode_strings)],
+    "default" => [qw(array_base)],   
+   
    'autodie/ipc'     => [qw(MULTI:autodie/ipc autodie/msg autodie/semaphore autodie/shm)],
    'autodie/io'      => [qw(MULTI:autodie/io  autodie/dbm autodie/file autodie/filesys autodie/ipc autodie/socket)],
    'autodie/default' => [qw(autodie/io autodie/threads)],
@@ -349,6 +364,9 @@ my %ALIAS = (
    'criticism/cruel'  => 'BITMAP:criticism/1',
    'criticism/brutal' => 'BITMAP:criticism/0',
    criticism          => 'criticism/gentle',
+
+   'experimental/smartmatch'   => '-warnings/experimental::smartmatch',
+   'experimental/lexical_subs' => [qw(-warnings/experimental::lexical_subs feature/lexical_subs)],
 
    # mimicry of other "meta pragma" modules
    'ex::caution'  => [qw(strict warnings)],
@@ -1103,6 +1121,8 @@ This feature was borrowed from L<strictures> and tweaked.
 
    criticism/*
    criticism   => criticism 'gentle'
+
+   experimental/*
 
    perl5i::0
    perl5i::1
