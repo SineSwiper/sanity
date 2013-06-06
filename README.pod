@@ -371,6 +371,8 @@ This feature was borrowed from L<strictures> and tweaked.
    criticism/*
    criticism   => criticism 'gentle'
 
+   experimental/*
+
    perl5i::0
    perl5i::1
    perl5i::2
