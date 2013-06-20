@@ -1,4 +1,4 @@
-﻿package sanity;
+package sanity;
 
 # VERSION
 # ABSTRACT: The ONLY meta pragma you'll ever need!
@@ -331,7 +331,7 @@ my %ALIAS = (
    'feature/unicode_strings' => 'feature/unicode',
    'feature/5.9.5'           => 'feature/5.10',
    'feature/5.10'            => [map { "feature/$_" } qw(say state switch)],  # 5.18 has array_base, but not in 5.10's version
-   'feature/5.11'            => [map { "feature/$_" } qw(5.10 unicode)],      
+   'feature/5.11'            => [map { "feature/$_" } qw(5.10 unicode)],
    'feature/5.12'            => 'feature/5.11',
    'feature/5.13'            => 'feature/5.11',
    'feature/5.14'            => 'feature/5.11',
@@ -347,8 +347,8 @@ my %ALIAS = (
     "5.11"    => [qw(array_base say state switch unicode_strings)],
     "5.15"    => [qw(current_sub evalbytes fc say state switch unicode_eval unicode_strings)],
     "all"     => [qw(array_base current_sub evalbytes fc lexical_subs say state switch unicode_eval unicode_strings)],
-    "default" => [qw(array_base)],   
-   
+    "default" => [qw(array_base)],
+
    'autodie/ipc'     => [qw(MULTI:autodie/ipc autodie/msg autodie/semaphore autodie/shm)],
    'autodie/io'      => [qw(MULTI:autodie/io  autodie/dbm autodie/file autodie/filesys autodie/ipc autodie/socket)],
    'autodie/default' => [qw(autodie/io autodie/threads)],
