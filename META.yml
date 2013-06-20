@@ -18,7 +18,10 @@ no_index:
     - xt
     - examples
     - corpus
-provides: {}
+provides:
+  sanity:
+    file: lib/sanity.pm
+    version: 1.01
 recommends:
   Carp: 0
   Toolkit: 0
@@ -45,7 +48,7 @@ resources:
   bugtracker: https://github.com/SineSwiper/sanity/issues
   homepage: https://github.com/SineSwiper/sanity/wiki
   repository: git://github.com/SineSwiper/sanity.git
-version: 1.00
+version: 1.01
 x_Dist_Zilla:
   perl:
     version: 5.014002
@@ -221,7 +224,7 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::TravisYML
       name: '@Filter/TravisYML'
-      version: 0.98
+      version: 1.03
     -
       class: Dist::Zilla::Plugin::Git::CheckFor::CorrectBranch
       name: '@Filter/Git::CheckFor::CorrectBranch'

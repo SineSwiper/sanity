@@ -1,0 +1,26 @@
+language: perl
+perl:
+   - 5.19
+   - 5.18
+   - 5.16
+   - 5.14
+   - 5.12
+   - 5.10
+   - 5.8
+branches:
+   only: /^build\/.*/
+before_install:
+   - cpanm --quiet --notest --skip-satisfied autovivification indirect multidimensional
+   - export AUTOMATED_TESTING=1 HARNESS_OPTIONS=j10:c HARNESS_TIMER=1
+   - rm .travis.yml
+install:
+   - cpanm --installdeps --verbose  --skip-satisfied .
+notifications:
+   irc:
+      channels:
+         - irc.perl.org#sanity
+      on_failure: always
+      on_success: change
+      template:
+         - '%{branch}#%{build_number} by %{author}: %{message} (%{build_url})'
+      use_notice: true
