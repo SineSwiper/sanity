@@ -50,7 +50,7 @@ sub digits {
   $self->{neg_char}   = '' if (grep { $_ eq $self->{neg_char}   } @{$self->{digits}});
   $self->{radix_char} = '' if (grep { $_ eq $self->{radix_char} } @{$self->{digits}});
   $self->{digit_strength} = log(scalar @{$self->{digits}}) / log(10);
-  
+
   # Build the translation table back to numbers
   delete $self->{trans};
   @{$self->{trans}}{@{$self->{digits}}} = 0..$#{$self->{digits}};
@@ -74,7 +74,7 @@ sub from_base {
   my ($self, $str) = @_;
   my ($nc, $fc) = @$self{qw(neg_char radix_char)};
   return $self->_from_accurate_return( Math::BigFloat->new( $self->from_base($str) )->bneg() )
-    if $nc && $str =~ s/^\Q$nc\E//;  # Handle negative numbers  
+    if $nc && $str =~ s/^\Q$nc\E//;  # Handle negative numbers
 
   # number clean up + decimal checks
   my $base = @{$self->{digits}};
@@ -82,7 +82,7 @@ sub from_base {
   my $is_dec = ($fc && $str =~ /\Q$fc\E/);
   $str =~ s/^\Q$zero\E+//;
   $str =~ s/\Q$zero\E+$// if ($is_dec);
-  
+
   # num of digits + big number support
   my $poten_digits = int(length($str) * $self->{digit_strength}) + 16;
   Math::BigFloat->accuracy($poten_digits + 16);
@@ -95,7 +95,7 @@ sub from_base {
     $result = $result->from_bin(   "0b$str") if ($self->{digitset_name} eq 'bin');
     $result = $result->from_oct(lc  "0$str") if ($self->{digitset_name} eq 'oct');
   }
-  
+
   if ($result == 0) {
     # num of digits (power)
     my $i = 0;
@@ -106,13 +106,13 @@ sub from_base {
     while ( $str =~ s/^(.)// ) {
       my $v = $self->{trans}{$1};
       croak "Invalid character $1 in string!" unless defined $v;
-      
+
       my $exp = Math::BigInt->new($base);
       $result = $exp->bpow($i)->bmul($v)->badd($result);
       $i--;  # may go into the negative for non-ints
     }
   }
-  
+
   return $self->_from_accurate_return($result);
 }
 
@@ -145,7 +145,7 @@ sub to_base {
 
   # (hold off on this check until after the big number support)
   return $self->{neg_char}.$self->to_base( $num->bneg ) if $num < 0;  # Handle negative numbers
-  
+
   # short-circuits
   return $zero if ($num == 0);  # this confuses log, so let's just get rid of this quick
   unless ($is_dec || !$self->{digitset_name}) {
@@ -158,9 +158,9 @@ sub to_base {
   # get the largest power of Z (the highest digit)
   my $i = $num->copy()->blog(
     $base,
-    int($num->length() / 9) + 2  # (an accuracy that is a little over the potential # of integer digits within log)  
+    int($num->length() / 9) + 2  # (an accuracy that is a little over the potential # of integer digits within log)
   )->bfloor()->numify();
-  
+
   my $result = '';
   # BigFloat's accuracy should counter this, but the $i check is
   # to make sure we don't get into an irrational/cyclic number loop
@@ -169,19 +169,19 @@ sub to_base {
     $exp    = $i < 0 ? $exp->bpow($i) : $exp->as_int->bpow($i);
     my $v   = $num->copy()->bdiv($exp)->bfloor();
     $num   -= $v * $exp;  # this method is safer for fractionals
-    
+
     $result .= $self->{radix_char} if ($i == -1);  # decimal point
     $result .= $self->{digits}[$v];
-    
+
     $i--;  # may go into the negative for non-ints
   }
 
   # Final cleanup
   return $zero unless length $result;
-  
+
   $result =~ s/^\Q$zero\E+//;
   $result =~ s/\Q$zero\E+$// if ($is_dec);
-  
+
   return $result;
 }
 
@@ -191,8 +191,8 @@ __END__
 =head1 DESCRIPTION
 
 This module is only temporary until Math::BaseCalc is fixed
-(L<https://rt.cpan.org/Ticket/Display.html?id=77198|RT #77198> and
-L<https://github.com/kenahoo/perl-math-basecalc/pull/2|Pull Request #2>).
+(L<RT #77198|https://rt.cpan.org/Ticket/Display.html?id=77198> and
+L<Pull Request #2|https://github.com/kenahoo/perl-math-basecalc/pull/2>).
 Do NOT use for anything else, as it will go away soon.
 
 =head1 SEE ALSO
