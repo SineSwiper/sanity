@@ -1,6 +1,16 @@
 Revision History for sanity
 ===========================
 
+v1.02 2013-06-22
+----------------
+
+commit 84ad34e5fba0a2ba956bd04d564c54e7f3fc6d80
+Author: Brendan Byrd <Perl@ResonatorSoft.org>
+Date:   Sat Jun 22 00:12:32 2013 -0400
+
+    Try to fix warnings by using proper unimport::out_of method
+    Force Travis-CI to use the git copy of sanity for all modules
+
 v1.01 2013-06-20
 ----------------
 

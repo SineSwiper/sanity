@@ -1,6 +1,6 @@
 package sanity;
 
-our $VERSION = '1.01'; # VERSION
+our $VERSION = '1.02'; # VERSION
 # ABSTRACT: The ONLY meta pragma you'll ever need!
 
 # use feature has to be difficult...
@@ -556,6 +556,8 @@ sub load_pragma {
    my ($modifier) = ($module =~ s/^([A-Z]+)\:(?!\:)//);
    $method  = 'un'.$method if ($modifier eq 'NO');
    $method =~ s/^unun//;
+
+   # Use import::into / unimport:out_of
    $method .= '::'.($method =~ /^un/ ? 'out_of' : 'into');
 
    die "Cannot use XXX flag: XXX:$module" if ($modifier eq 'XXX');
@@ -593,8 +595,7 @@ sub load_pragma {
       @nonfatal = notin(\@combos, [ foundin(\@warn_categories, \@nonfatal) ]);
 
       # if this is an import, first clean all warnings
-      require warnings;
-      warnings->unimport();
+      warnings->unimport::out_of($target);
 
       # warnings can handle both in one import, so let's do it that way
       @options = ();
@@ -603,8 +604,7 @@ sub load_pragma {
    }
    if ($module eq 'strict') {
       # if this is an import, first clean all stricts
-      require strict;
-      strict->unimport();
+      strict->unimport::out_of($target);
    }
    # (BITMAPs)
    if ($modifier eq 'BITMAP') {
