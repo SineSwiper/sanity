@@ -1,6 +1,7 @@
 package  # hide from PAUSE
    sanity::BaseCalc;
 
+# AUTHORITY
 # VERSION
 # ABSTRACT: DO NOT USE!
 
