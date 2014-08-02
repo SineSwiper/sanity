@@ -1,6 +1,6 @@
 =pod
 
-=encoding utf-8
+=encoding UTF-8
 
 =head1 NAME
 
@@ -409,7 +409,7 @@ Actually need to write sanity::sanity POD.
 
 =head1 AVAILABILITY
 
-The project homepage is L<https://github.com/SineSwiper/sanity/wiki>.
+The project homepage is L<https://github.com/SineSwiper/sanity>.
 
 The latest version of this module is available from the Comprehensive Perl
 Archive Network (CPAN). Visit L<http://www.perl.com/CPAN/> to find a CPAN
@@ -442,7 +442,7 @@ Please report any bugs or feature requests via L<https://github.com/SineSwiper/s
 
 =head1 AUTHOR
 
-Brendan Byrd <bbyrd@cpan.org>
+Brendan Byrd <BBYRD@CPAN.org>
 
 =head1 CONTRIBUTOR
 
@@ -450,9 +450,10 @@ Graham Knop <haarg@haarg.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2013 by Brendan Byrd.
+This software is Copyright (c) 2014 by Brendan Byrd.
 
 This is free software, licensed under:
 
   The Artistic License 2.0 (GPL Compatible)
 
+=cut
