@@ -1,184 +1,33 @@
 Revision History for sanity
 ===========================
 
-v1.02 2013-06-22
+v1.03 2014-10-01
 ----------------
 
-commit 84ad34e5fba0a2ba956bd04d564c54e7f3fc6d80
-Author: Brendan Byrd <Perl@ResonatorSoft.org>
-Date:   Sat Jun 22 00:12:32 2013 -0400
+[4e20dfe]
+* Author: Brendan Byrd <Perl@ResonatorSoft.org>
+* Date:   2014-10-01 23:44:28 -0400 (64 seconds ago)
 
-    Try to fix warnings by using proper unimport::out_of method
-    Force Travis-CI to use the git copy of sanity for all modules
+Clean up 'features' flags
 
-v1.01 2013-06-20
-----------------
+[8078293]
+* Author: Brendan Byrd <Perl@ResonatorSoft.org>
+* Date:   2014-08-01 21:00:58 -0400 (9 weeks ago)
 
-commit 49fd67eecb8c4ef436a7e9ce6998fac6ad5c1740
-Author: Brendan Byrd <Perl@ResonatorSoft.org>
-Date:   Thu Jun 20 19:57:10 2013 -0400
+Add in new Perl 5.20/21 flags
 
-    Fix BOM interaction with Module::Metadata during tar build
-       (by removing the BOM)
+[e6adc1a]
+* Author: Brendan Byrd <Perl@ResonatorSoft.org>
+* Date:   2014-08-01 21:00:07 -0400 (9 weeks ago)
 
-v1.00 2013-06-06
-----------------
+Make warnbits.pl (slightly) more readable
 
-commit 1b512d7de71a37dd589de4c7b5f21cfeb7c6a930
-Author: Brendan Byrd <Perl@ResonatorSoft.org>
-Date:   Thu Jun 6 19:29:30 2013 -0400
+[444fc20]
+* Author: Brendan Byrd <Perl@ResonatorSoft.org>
+* Date:   2014-08-01 20:59:27 -0400 (9 weeks ago)
 
-    Release v1.00
+Distro housekeeping
 
-commit 227f8493749157743b2595de7440053df855b468
-Author: Brendan Byrd <Perl@ResonatorSoft.org>
-Date:   Thu Jun 6 19:26:01 2013 -0400
-
-    Fix smartmatch warnings
-    Update feature bits
-    Add experimental pragma to list
-
-v0.97 2013-06-03
-----------------
-
-commit f4b4af1cd4bd50d0c0f3829d7a2c469e02ea2c7d
-Author: Brendan Byrd <Perl@ResonatorSoft.org>
-Date:   Mon Jun 3 21:41:39 2013 -0400
-
-    Fix exec bits
-
-commit 376b8e0738dbc3bf86152feb4a7ac530cb9d06ec
-Author: Brendan Byrd <Perl@ResonatorSoft.org>
-Date:   Sun Jun 2 18:54:48 2013 -0400
-
-    Add in new 'experimental' warning flags
-    Fix warning alias bitmasks
-    Add -warnings/experimental::smartmatch to sanity pragma
-
-commit 273dd26fe213510d780798547e8b506c8603e074
-Merge: 225fa24 61bfb36
-Author: Brendan Byrd <Perl@ResonatorSoft.org>
-Date:   Thu May 16 19:23:44 2013 -0400
-
-    Merge branch 'master' of github.com:SineSwiper/sanity
-
-commit eca336bef6132e30a33d46272e065f2da5d07d71
-Author: Graham Knop <haarg@haarg.org>
-Date:   Fri Apr 26 10:00:22 2013 -0400
-
-    add missing newline at end of file
-
-commit 12b1cc47ed614f0150e46a0e1749027a9bd095d5
-Author: Graham Knop <haarg@haarg.org>
-Date:   Fri Apr 26 09:59:50 2013 -0400
-
-    remove pod encoding from .pm so Pod::Weaver can handle it
-
-v0.96 2013-05-16
-----------------
-
-commit 225fa2401c2eefebf5629e512c3535f1558c9619
-Author: Brendan Byrd <Perl@ResonatorSoft.org>
-Date:   Thu May 16 19:22:22 2013 -0400
-
-    Release v0.96
-
-commit 49c0c97cf915ca5f21b9576871aa77a892dcb852
-Author: Brendan Byrd <Perl@ResonatorSoft.org>
-Date:   Thu Apr 25 16:59:08 2013 -0400
-
-    Remove weaver.ini (in favor of Author plugin)
-
-v0.95 2013-03-18
-----------------
-
-commit d36cafa326450af94279c18495175939641e1ae0
-Author: Brendan Byrd <Perl@ResonatorSoft.org>
-Date:   Mon Mar 18 12:15:58 2013 -0400
-
-    Release v0.95
-
-commit e0898518bfaefdc958c0ac6dcf7919a071aef5ce
-Author: Brendan Byrd <Perl@ResonatorSoft.org>
-Date:   Mon Mar 18 12:08:05 2013 -0400
-
-    Fix $author_mode to be a bit less zealous (Issue #1)
-
-commit 906e91fa7a8a78aa062bcbda7f457795c3c2023a
-Author: Brendan Byrd <Perl@ResonatorSoft.org>
-Date:   Mon Mar 18 11:57:39 2013 -0400
-
-    Add some extra modules
-    Make sure POD encoding is UTF-8, so that the SYNOPSIS shows up right
-    Fix version dep of Math::BigInt
-
-v0.94 2012-10-02
-----------------
-
-commit 0d7a99222077d96bd1387e0d0744569dec4446d1
-Author: Brendan Byrd <Perl@ResonatorSoft.org>
-Date:   Tue Oct 2 14:55:54 2012 -0400
-
-    Release v0.94
-
-commit 4fbe24b1e601ce180606b65bbb6ea774075072b7
-Author: Brendan Byrd <Perl@ResonatorSoft.org>
-Date:   Tue Oct 2 14:07:40 2012 -0400
-
-    Third strike for namespace::sweep
-
-v0.93 2012-07-24
-----------------
-
-commit b8644d9f8e63eb79c30a641641c6fdb732c76d99
-Author: Brendan Byrd <Perl@ResonatorSoft.org>
-Date:   Tue Jul 24 15:37:30 2012 -0400
-
-    Release v0.93
-
-commit a61f236c768455b90c9dfb1637600a930fe0ec6e
-Author: Brendan Byrd <Perl@ResonatorSoft.org>
-Date:   Tue Jul 24 15:36:02 2012 -0400
-
-    Add weaver stuff
-    Fix sanity to use namespace::sweep, like it's suppose to
-
-v0.92 2012-07-17
-----------------
-
-commit 426420f583f043d87de893be77e34104322c743a
-Author: Brendan Byrd <Perl@ResonatorSoft.org>
-Date:   Tue Jul 17 23:28:56 2012 -0400
-
-    Release v0.92
-
-commit 7ffeb8efdd320db4ae4ad17eba7ffadd48a57af8
-Author: Brendan Byrd <Perl@ResonatorSoft.org>
-Date:   Tue Jul 17 23:07:58 2012 -0400
-
-    Fix overzealous replacement of switch->flag in POD
-
-v0.91 2012-07-17
-----------------
-
-commit 0f59169b76672ccbafa9b623d6be0d8fd68a0053
-Author: Brendan Byrd <Perl@ResonatorSoft.org>
-Date:   Tue Jul 17 19:28:44 2012 -0400
-
-    Release v0.91
-
-commit 4cc5251e157c73fe39c2026b1bce2fb8ca6b4482
-Author: Brendan Byrd <Perl@ResonatorSoft.org>
-Date:   Tue Jul 17 14:29:50 2012 -0400
-
-    Fix weird BOM issue with sanity.pm, which was causing an undetected
-       package in Module::Metadata
-
-commit 38e5f11d1eaaca25f42a26036c921cd7de78864f
-Author: Brendan Byrd <Perl@ResonatorSoft.org>
-Date:   Mon Jul 16 14:27:47 2012 -0400
-
-    dist.ini adjustments
 
 ===================================
 End of changes in the last 365 days

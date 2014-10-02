@@ -1,7 +1,8 @@
 package  # hide from PAUSE
    sanity::BaseCalc;
 
-our $VERSION = '1.02'; # VERSION
+our $AUTHORITY = 'cpan:BBYRD'; # AUTHORITY
+our $VERSION = '1.03'; # VERSION
 # ABSTRACT: DO NOT USE!
 
 use strict;
@@ -191,7 +192,7 @@ __END__
 
 =pod
 
-=encoding utf-8
+=encoding UTF-8
 
 =head1 NAME
 
@@ -210,7 +211,7 @@ L<Math::BaseCalc>
 
 =head1 AVAILABILITY
 
-The project homepage is L<https://github.com/SineSwiper/sanity/wiki>.
+The project homepage is L<https://github.com/SineSwiper/sanity>.
 
 The latest version of this module is available from the Comprehensive Perl
 Archive Network (CPAN). Visit L<http://www.perl.com/CPAN/> to find a CPAN
@@ -218,11 +219,11 @@ site near you, or see L<https://metacpan.org/module/sanity/>.
 
 =head1 AUTHOR
 
-Brendan Byrd <bbyrd@cpan.org>
+Brendan Byrd <BBYRD@CPAN.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2013 by Brendan Byrd.
+This software is Copyright (c) 2014 by Brendan Byrd.
 
 This is free software, licensed under:
 

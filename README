@@ -1,11 +1,13 @@
 NAME
+
     sanity - The ONLY meta pragma you'll ever need!
 
 SYNOPSIS
+
        use sanity;
        use sanity 'strictures';
        use sanity 'Modern::Perl';
-
+    
        use sanity qw(
           strictures -warnings/uninitialized/FATAL
           NO:autovivification NO:autovivification/store
@@ -15,17 +17,18 @@ SYNOPSIS
        use sanity '¡0ǲ鵆㤧뱞⡫瘑빸ን둈댬嚝⠨舁聼䮋';  # Shorter UTF8 version
 
 DESCRIPTION
+
     Modern::Perl? common::sense? no nonsense? use latest?
 
     Everybody has their own opinion on what pragmas and modules are
     "required" for every person to use. These opinions turn into "personal
-    pragmas", so that people don't have to type several "use" lines of
-    header in front of every module they write.
+    pragmas", so that people don't have to type several use lines of header
+    in front of every module they write.
 
-    Personal opinions and pragmas don't really belong in the CPAN namespace.
-    (It's CPAN, not Personal PAN. If you want a Personal PAN, go call Pizza
-    Hut.) But copying code on potentially hundreds of modules doesn't make
-    sense, either.
+    Personal opinions and pragmas don't really belong in the CPAN
+    namespace. (It's CPAN, not Personal PAN. If you want a Personal PAN, go
+    call Pizza Hut.) But copying code on potentially hundreds of modules
+    doesn't make sense, either.
 
     That was my mentality when I had a personal opinion of my own. Why
     repeat the same problem like everybody else?
@@ -34,15 +37,17 @@ DESCRIPTION
     customizable personal pragma, allowing you to both reduce the code
     needed and still implement all of the modules/pragmas you need.
 
-    As an illustration to what it's capable of, this pragma will emulate all
-    of the other personal pragmas, most of them 100% working exactly how
-    they do it.
+    As an illustration to what it's capable of, this pragma will emulate
+    all of the other personal pragmas, most of them 100% working exactly
+    how they do it.
 
 PARAMETERS
+
     Sanity's parameters fall into three types: flags, aliases, and hashes.
     (Oh my!)
 
-  Flags and Aliases
+ Flags and Aliases
+
     Flags are single pragma/module declarations, strict/warning flags, or
     other items that need flags. Aliases are merely one or more flags,
     grouped together to better emulate the pragma/module's functionality.
@@ -53,7 +58,7 @@ PARAMETERS
        use Modern::Perl;
        use sanity 'Modern::Perl';
        use sanity qw(strict warnings mro/dfs feature IO::File IO::Handle);
-
+    
        # ...these statements
        use strict;
        use warnings;
@@ -64,42 +69,45 @@ PARAMETERS
 
     Basically, it does the same thing as the meta pragma Modern::Perl,
     except you actually don't need that module for it to work. While there
-    is some magic to make sure, say, "feature" gets loaded with various
-    versions of Perl, it typically just works using a standard "import"
-    call. The "strict" and "warnings" flags are combined aliases that enable
-    all of the warnings that they would do via a standard call.
+    is some magic to make sure, say, feature gets loaded with various
+    versions of Perl, it typically just works using a standard import call.
+    The strict and warnings flags are combined aliases that enable all of
+    the warnings that they would do via a standard call.
 
-   Negating flags/aliases
+  Negating flags/aliases
+
     You can turn off flags in the statement:
 
        use sanity qw(Modern::Perl -mro/dfs);
 
-    This does the same thing as above, except it doesn't import the "mro"
+    This does the same thing as above, except it doesn't import the mro
     pragma. You can negate any flag, including combined aliases, as long as
     it makes sense. In other words, you need a positive included before you
     can negate something.
 
-   NO:* flags/aliases
-    Some pragmas work by using the "unimport" function, so that the English
-    makes sense. To keep that syntax, these pragmas are included with a
-    "NO:" prefix:
+  NO:* flags/aliases
+
+    Some pragmas work by using the unimport function, so that the English
+    makes sense. To keep that syntax, these pragmas are included with a NO:
+    prefix:
 
        use sanity 'NO:multidimensional';
        use sanity 'NO:indirect/FATAL';
 
-    This will run the "unimport" function on these pragmas, even though
-    sanity was called via the "import" function (via "use").
+    This will run the unimport function on these pragmas, even though
+    sanity was called via the import function (via use).
 
-   Perl versions
-    Sanity also supports Perl versions as a special kind of alias to specify
-    minimum Perl versions:
+  Perl versions
+
+    Sanity also supports Perl versions as a special kind of alias to
+    specify minimum Perl versions:
 
        # These are all the same:
        use v5.10.1;
        use sanity 'v5.10.1';
        use sanity v5.10.1;  # as a VSTRING
        use sanity 5.10.1;   # works too
-
+    
        # Upgrade the Perl version of your favorite pragma
        use sanity qw(NO:nonsense v5.12);
 
@@ -108,19 +116,21 @@ PARAMETERS
     older than one released in 2002, I will hunt you down and break your
     keyboard in half.)
 
-   The Default
-    What does "sanity" do without any parameters? Why my personal
-    preference, of course :) It's listed in the "meta pragma" section of the
-    "LIST OF FLAGS" below. I detail the reasons behind my choices here.
+  The Default
 
-  Hashes
+    What does sanity do without any parameters? Why my personal preference,
+    of course :) It's listed in the meta pragma section of the "LIST OF
+    FLAGS" below. I detail the reasons behind my choices here.
+
+ Hashes
+
     So, there's all of these flags, but unless you're using one of the
     combined aliases, typing them all out is usually just as much (or more)
-    code as the several lines of "use" statements. Well, they are all flags
+    code as the several lines of use statements. Well, they are all flags
     so that it fits into a giant bitmap, and that bitmap can be compressed
     into a large ASCII (or UTF-8) "number".
 
-    This number can be calculated using the flag "PRINT_PRAGMA_HASH":
+    This number can be calculated using the flag PRINT_PRAGMA_HASH:
 
        # This is merely the definition of uni::perl
        use sanity (qw(
@@ -138,7 +148,7 @@ PARAMETERS
           mro/c3
           Carp
        ), 'PRINT_PRAGMA_HASH');
-
+    
        # Outputs:
        # use sanity '!04[D{9Fhfqc-7m738S4HK6B#D5=v{,T$(0)F5i';  # Safer ASCII version
        # use sanity '¡05༕ቑ釩腜쥸봱楇䐍퇥熠ᾯ緻褻真堩';  # Shorter UTF8 version
@@ -146,50 +156,56 @@ PARAMETERS
     You can use that hash as the output illustrates without having to type
     out the entire big set of commands or flags.
 
-  Other Meta Pragmas
+ Other Meta Pragmas
+
     Have your own set that is too long, and you don't like the ugliness of
     the hash? Send me your suggestion and I'll probably add it in.
 
 CAVEATS
-  'NO:' ne '-'
-    A "NO:" flag is NOT the same as negating a flag! You also cannot remove
-    the "NO:" from a flag, as it's part of the name of the flag, not a
+
+ 'NO:' ne '-'
+
+    A NO: flag is NOT the same as negating a flag! You also cannot remove
+    the NO: from a flag, as it's part of the name of the flag, not a
     special modifier.
 
        # These two are NOT the same!
        use sanity 'NO:indirect';  # runs indirect->unimport()
        use sanity '-indirect';    # Dies, as there is no such flag/alias
-
+    
        # This runs through the strictures alias and runs autovivification->unimport()
        use sanity qw(strictures NO:autovivification);
-
+    
        # This runs through the strictures alias WITHOUT running indirect->unimport()
        use sanity qw(strictures -NO:indirect);
-
+    
        use sanity '-indirect';    # This isn't what you want...
        no  sanity 'NO:indirect';  # ...you really meant to do this...
        use indirect;              # ...but this is better
 
-  Special clearing of strict/warnings
-    Since most people want exactly the strictness and warnings they specify,
-    sanity will clear these out first before running through the list.
+ Special clearing of strict/warnings
+
+    Since most people want exactly the strictness and warnings they
+    specify, sanity will clear these out first before running through the
+    list.
 
        # This...
        use sanity qw(strict -strict/vars);
-
+    
        # ...is the same as this...
        no strict;
        use strict qw(subs refs);
 
     Also, some special magic is in place to ensure that newer
     warnings/features aren't fatal to older Perls. See
-    <https://rt.perl.org/rt3/Ticket/Display.html?id=112920>.
+    https://rt.perl.org/rt3/Ticket/Display.html?id=112920.
 
-  "Author" pragmas
+ "Author" pragmas
+
     Certain pragmas really only exist to make sure the code is designed
-    right. These pragmas are deemed "optional" by "sanity". In other words,
+    right. These pragmas are deemed "optional" by sanity. In other words,
     if the user doesn't have them, it will just silently ignore them and
-    move on. If "sanity" thinks you're an author/coder of the module itself
+    move on. If sanity thinks you're an author/coder of the module itself
     (.git/svn/$ENV checks), it will give you a warning that they are
     missing, but move on.
 
@@ -203,14 +219,16 @@ CAVEATS
        multidimensional
        bareword::filehandles
        criticism
-
+    
        # (autovivification probably shouldn't be here, since it actually
        # prevents autoviv, but it's generally used as an author tool.)
 
     This feature was borrowed from strictures and tweaked.
 
 LIST OF FLAGS
-  Emulation of "meta pragmas"
+
+ Emulation of "meta pragmas"
+
        ex::caution:
           strict
           warnings
@@ -276,7 +294,7 @@ LIST OF FLAGS
           no strict 'refs'
           warnings FATAL => 'all'
           no warnings qw(uninitialized experimental::smartmatch)
-          feature
+          feature '5.10'
           no autovivification qw(fetch exists delete store strict)
           no indirect 'fatal'
           no multidimensional
@@ -300,10 +318,11 @@ LIST OF FLAGS
           Toolkit
           Carp
 
-  Other flags/aliases
+ Other flags/aliases
+
        strict/* => strict '[whatever]'        # supports all flags
        strict   => strict qw(refs subs vars)
-
+    
        # other "hints"
        integer
        locale
@@ -313,26 +332,26 @@ LIST OF FLAGS
        filetest
        utf8
        NO:overloading
-
+    
        warnings/*       => warnings NONFATAL => '[whatever]'  # supports all flags, multi or not
        warnings/*/FATAL => warnings    FATAL => '[whatever]'  # supports all flags; FATAL trumps NONFATAL
        warnings         => warnings NONFATAL => 'all'
        warnings/FATAL   => warnings    FATAL => 'all'
-
+    
        feature/*        => feature '[whatever]'  # supports all flags
        feature/5.##     => # similar to feature enabling via 'use v5.##'; major version only
        feature/5.9.5    => # also exists, just like feature/5.10
        feature          => feature ':all'  # not exactly, but in spirit
-
+    
        # Perl versions, described above
        v5.##.##
-
+    
        # autodie
        autodie/* => autodie ':[whatever]'  # supports all _category_ flags, like all, io, shm, etc.
                                            # (Will expand if requested, but I don't want to waste
                                            # all of that bit space right now.)
        autodie   => autodie ':default'
-
+    
        # other CORE pragmas
        bigint
        bignum
@@ -345,34 +364,34 @@ LIST OF FLAGS
        mro/dfs                    # default for 'mro'
        mro/c3
        open/*
-
+    
        # namespace cleaners
        namespace::clean       # included last; adds -except => 'meta'
        namespace::functions   # included last
        namespace::autoclean
        namespace::sweep
-
+    
        # others
        NO:autovivification/*
        NO:autovivification => no autovivification qw(fetch exists delete)
-
+    
        criticism/*
        criticism   => criticism 'gentle'
-
+    
        experimental/*
-
+    
        perl5i::0
        perl5i::1
        perl5i::2
        perl5i::3
        perl5i::latest
-
+    
        NO:indirect
        NO:indirect/global
        NO:indirect/fatal
        NO:multidimensional
        NO:bareword::filehandles
-
+    
        subs::auto
        utf8::all
        IO::File
@@ -383,7 +402,7 @@ LIST OF FLAGS
        true
        autolocale
        Toolkit
-
+    
        Function::Parameters
        Function::Parameters/strict
        Switch::Plain
@@ -392,40 +411,48 @@ LIST OF FLAGS
     Am I missing something? Let me know.
 
 TODO
+
     Actually need to write sanity::sanity POD.
 
 AVAILABILITY
-    The project homepage is <https://github.com/SineSwiper/sanity/wiki>.
+
+    The project homepage is https://github.com/SineSwiper/sanity.
 
     The latest version of this module is available from the Comprehensive
-    Perl Archive Network (CPAN). Visit <http://www.perl.com/CPAN/> to find a
-    CPAN site near you, or see <https://metacpan.org/module/sanity/>.
+    Perl Archive Network (CPAN). Visit http://www.perl.com/CPAN/ to find a
+    CPAN site near you, or see https://metacpan.org/module/sanity/.
 
 SUPPORT
-  Internet Relay Chat
-    You can get live help by using IRC ( Internet Relay Chat ). If you don't
-    know what IRC is, please read this excellent guide:
-    <http://en.wikipedia.org/wiki/Internet_Relay_Chat>. Please be courteous
-    and patient when talking to us, as we might be busy or sleeping! You can
-    join those networks/channels and get help:
 
-    *   irc.perl.org
+ Internet Relay Chat
 
-        You can connect to the server at 'irc.perl.org' and talk to this
-        person for help: SineSwiper.
+    You can get live help by using IRC ( Internet Relay Chat ). If you
+    don't know what IRC is, please read this excellent guide:
+    http://en.wikipedia.org/wiki/Internet_Relay_Chat. Please be courteous
+    and patient when talking to us, as we might be busy or sleeping! You
+    can join those networks/channels and get help:
 
-  Bugs / Feature Requests
+      * irc.perl.org
+
+      You can connect to the server at 'irc.perl.org' and talk to this
+      person for help: SineSwiper.
+
+ Bugs / Feature Requests
+
     Please report any bugs or feature requests via
-    <https://github.com/SineSwiper/sanity/issues>.
+    https://github.com/SineSwiper/sanity/issues.
 
 AUTHOR
-    Brendan Byrd <bbyrd@cpan.org>
+
+    Brendan Byrd <BBYRD@CPAN.org>
 
 CONTRIBUTOR
+
     Graham Knop <haarg@haarg.org>
 
 COPYRIGHT AND LICENSE
-    This software is Copyright (c) 2013 by Brendan Byrd.
+
+    This software is Copyright (c) 2014 by Brendan Byrd.
 
     This is free software, licensed under:
 

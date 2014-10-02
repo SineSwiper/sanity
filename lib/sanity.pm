@@ -1,6 +1,7 @@
 package sanity;
 
-our $VERSION = '1.02'; # VERSION
+our $AUTHORITY = 'cpan:BBYRD'; # AUTHORITY
+our $VERSION = '1.03'; # VERSION
 # ABSTRACT: The ONLY meta pragma you'll ever need!
 
 # use feature has to be difficult...
@@ -8,7 +9,7 @@ our $VER_PACK;
 BEGIN { $VER_PACK = sprintf(":%vd", $^V); }
 
 # Eat our own dog food
-use utf8;  # the BaseCalc 'numbers' are definitely UTF-8
+use utf8;
 use strict qw(subs vars);
 no strict 'refs';
 #use feature ($VER_PACK);
@@ -23,10 +24,10 @@ use sanity::BaseCalc;  ### FIXME: Temporary until Math::BaseCalc fix (RT #77198)
 use List::MoreUtils qw(any all none uniq);
 
 # Useful for importing modules, including stuff like Carp and its exports
-use Import::Into 1.001000;
+use Import::Into v1.1.0;
 
 my $base90 = [0..9, 'A'..'Z', 'a'..'z', split(//, '#$%&()*+.,-/:;<=>?@[]^_`{|}~')];  # no !, ', ", or \
-my $base48900 = [  # PHEAR THIS!
+my $base48900 = [
    @$base90,
    # see printuni.pl for details
    map { chr } (
@@ -172,10 +173,10 @@ my @FLAGS = (
       warnings/experimental::lexical_topic  MULTI:warnings/experimental::lexical_topic/FATAL
       warnings/experimental::regex_sets     MULTI:warnings/experimental::regex_sets/FATAL
       warnings/experimental::smartmatch     MULTI:warnings/experimental::smartmatch/FATAL
-      XXX:warnings/56        XXX:warnings/56/FATAL
-      XXX:warnings/57        XXX:warnings/57/FATAL
-      XXX:warnings/58        XXX:warnings/58/FATAL
-      XXX:warnings/59        XXX:warnings/59/FATAL
+      warnings/experimental::autoderef      MULTI:warnings/experimental::autoderef/FATAL
+      warnings/experimental::postderef      MULTI:warnings/experimental::postderef/FATAL
+      warnings/experimental::signatures     MULTI:warnings/experimental::signatures/FATAL
+      warnings/syscalls      MULTI:warnings/syscalls/FATAL
       XXX:warnings/60        XXX:warnings/60/FATAL
       XXX:warnings/61        XXX:warnings/61/FATAL
       XXX:warnings/62        XXX:warnings/62/FATAL
@@ -195,12 +196,14 @@ my @FLAGS = (
       feature/current_sub
       feature/lexical_subs
       feature/unicode_eval
-      XXX:feature/11
-      XXX:feature/12
-      XXX:feature/13
-      XXX:feature/14
+      feature/signatures
+      feature/postderef
+      feature/postderef_qq
+      feature/current_sub
       XXX:feature/15
    ),
+
+   ### TODO: Might need move this set to the bottom and add some extra bitmap bits after Perl 5.23
 
    # Perl versions (Bits 177-184)
    # (MAJOR-8)*16 + MINOR + 1 = 8-bit bitmap
@@ -308,18 +311,18 @@ my %ALIAS = (
    strict => [qw(strict/refs strict/subs strict/vars)],
 
    # See corpus/warnbits.pl for the bitwise math
-   'warnings/all'                =>  '7433581732843541047178572757549452403671040',  # 0x55555555555555555555555555550000
-   'warnings/all/FATAL'          => '22300745198530623141535718272648357211013120',  # 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000
-   'warnings/io'                 =>                            '24017731997138944',  # 0x00545500000000000000000000000000
-   'warnings/io/FATAL'           =>                            '72053195991416832',  # 0x00FCFF00000000000000000000000000
-   'warnings/severe'             =>                    '6441307882634196071481344',  # 0x00000000005405000000000000000000
-   'warnings/severe/FATAL'       =>                   '19323923647902588214444032',  # 0x0000000000FC0F000000000000000000
-   'warnings/syntax'             =>       '85071024421536332098205581043061227520',  # 0x00000000000000555515004000000000
-   'warnings/syntax/FATAL'       =>      '170142481534374380428773091271241629696',  # 0x00000000000000FFFF3F008000000000
-   'warnings/utf8'               =>     '7147258933335492648603770563127412785152',  # 0x00000000000000000000000115000000
-   'warnings/utf8/FATAL'         =>    '21441776800006477945811311689382238355456',  # 0x0000000000000000000000033F000000
-   'warnings/experimental'       =>  '7426322375682561026624687432590909446815744',  # 0x00000000000000000000000040550000
-   'warnings/experimental/FATAL' => '22278967127047683079874062297772728340447232',  # 0x000000000000000000000000C0FF0000
+   'warnings/all'                => '1902996923607946508077714625932660180412006400',  # 0x55555555555555555555555555555500
+   'warnings/all/FATAL'          => '5708990770823839524233143877797980541236019200',  # 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00
+   'warnings/io'                 => '1427247692705959881058285969473512868379885568',  # 0x00545500000000000000000000004000
+   'warnings/io/FATAL'           => '4281743078117879643174857908420538605139656704',  # 0x00FCFF0000000000000000000000C000
+   'warnings/severe'             =>                      '6441307882634196071481344',  # 0x00000000005405000000000000000000
+   'warnings/severe/FATAL'       =>                     '19323923647902588214444032',  # 0x0000000000FC0F000000000000000000
+   'warnings/syntax'             =>         '85071024421536332098205581043061227520',  # 0x00000000000000555515004000000000
+   'warnings/syntax/FATAL'       =>        '170142481534374380428773091271241629696',  # 0x00000000000000FFFF3F008000000000
+   'warnings/utf8'               =>       '7147258933335492648603770563127412785152',  # 0x00000000000000000000000115000000
+   'warnings/utf8/FATAL'         =>      '21441776800006477945811311689382238355456',  # 0x0000000000000000000000033F000000
+   'warnings/experimental'       =>  '475741971544825646998874771158206501072404480',  # 0x00000000000000000000000040551500
+   'warnings/experimental/FATAL' => '1427225914634476940996624313474619503217213440',  # 0x000000000000000000000000C0FF3F00
    'warnings'                    => 'warnings/all',
    'warnings/FATAL'              => 'warnings/all/FATAL',
 
@@ -341,13 +344,8 @@ my %ALIAS = (
    'feature/5.18'            => 'feature/5.15',
    'feature/5.19'            => 'feature/5.15',
    'feature/5.20'            => 'feature/5.15',
+   'feature/5.21'            => 'feature/5.15',
    feature                   => 'feature/^V',
-
-    "5.10"    => [qw(array_base say state switch)],
-    "5.11"    => [qw(array_base say state switch unicode_strings)],
-    "5.15"    => [qw(current_sub evalbytes fc say state switch unicode_eval unicode_strings)],
-    "all"     => [qw(array_base current_sub evalbytes fc lexical_subs say state switch unicode_eval unicode_strings)],
-    "default" => [qw(array_base)],
 
    'autodie/ipc'     => [qw(MULTI:autodie/ipc autodie/msg autodie/semaphore autodie/shm)],
    'autodie/io'      => [qw(MULTI:autodie/io  autodie/dbm autodie/file autodie/filesys autodie/ipc autodie/socket)],
@@ -364,9 +362,6 @@ my %ALIAS = (
    'criticism/cruel'  => 'BITMAP:criticism/1',
    'criticism/brutal' => 'BITMAP:criticism/0',
    criticism          => 'criticism/gentle',
-
-   'experimental/smartmatch'   => '-warnings/experimental::smartmatch',
-   'experimental/lexical_subs' => [qw(-warnings/experimental::lexical_subs feature/lexical_subs)],
 
    # mimicry of other "meta pragma" modules
    'ex::caution'  => [qw(strict warnings)],
@@ -406,13 +401,29 @@ my %ALIAS = (
       utf8
    )],
    'sanity'   => [qw(
-      v5.10.1 utf8 open/utf8 open/std mro/c3 strict/subs strict/vars feature
+      v5.10.1 utf8 open/utf8 open/std mro/c3 strict/subs strict/vars feature/5.10
       warnings/all/FATAL -warnings/uninitialized/FATAL -warnings/experimental::smartmatch/FATAL
       NO:autovivification NO:autovivification/store NO:autovivification/strict
       NO:indirect/fatal NO:multidimensional
    )],
    'Acme::Very::Modern::Perl' => [qw(Modern::Perl -mro/dfs mro/c3 utf8 open/utf8 open/std common::sense perl5i::latest Toolkit Carp)],
 );
+
+# Implement experimental ALIASes in a similar manner as Leon's code itself
+foreach my $main_pragma (qw[ array_base autoderef lexical_topic postderef regex_sets signatures smartmatch switch ]) {
+    # additional pragmas to enable
+    my @pragmas = ($main_pragma);
+    push @pragmas, 'postderef_qq' if $main_pragma eq 'postderef';
+    push @pragmas, 'smartmatch'   if $main_pragma eq 'switch';
+
+    my @flags;
+    foreach my $pragma (@pragmas) {
+        push @flags, "-warnings/experimental::$pragma" if "warnings/experimental::$pragma" ~~ @FLAGS;
+        push @flags, "feature/$pragma"                 if "feature/$pragma"                ~~ @FLAGS;
+    }
+
+    $ALIAS{"experimental/$main_pragma"} = \@flags;
+}
 
 # All FATAL warnings have both bits marked (at least in $^{WARNING_BITS}),
 # so we'll mimic the same
@@ -759,7 +770,7 @@ __END__
 
 =pod
 
-=encoding utf-8
+=encoding UTF-8
 
 =head1 NAME
 
@@ -1046,7 +1057,7 @@ This feature was borrowed from L<strictures> and tweaked.
       no strict 'refs'
       warnings FATAL => 'all'
       no warnings qw(uninitialized experimental::smartmatch)
-      feature
+      feature '5.10'
       no autovivification qw(fetch exists delete store strict)
       no indirect 'fatal'
       no multidimensional
@@ -1168,7 +1179,7 @@ Actually need to write sanity::sanity POD.
 
 =head1 AVAILABILITY
 
-The project homepage is L<https://github.com/SineSwiper/sanity/wiki>.
+The project homepage is L<https://github.com/SineSwiper/sanity>.
 
 The latest version of this module is available from the Comprehensive Perl
 Archive Network (CPAN). Visit L<http://www.perl.com/CPAN/> to find a CPAN
@@ -1201,15 +1212,17 @@ Please report any bugs or feature requests via L<https://github.com/SineSwiper/s
 
 =head1 AUTHOR
 
-Brendan Byrd <bbyrd@cpan.org>
+Brendan Byrd <BBYRD@CPAN.org>
 
 =head1 CONTRIBUTOR
+
+=for stopwords Graham Knop
 
 Graham Knop <haarg@haarg.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2013 by Brendan Byrd.
+This software is Copyright (c) 2014 by Brendan Byrd.
 
 This is free software, licensed under:
 
