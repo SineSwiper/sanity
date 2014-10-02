@@ -27,7 +27,7 @@ use List::MoreUtils qw(any all none uniq);
 use Import::Into v1.1.0;
 
 my $base90 = [0..9, 'A'..'Z', 'a'..'z', split(//, '#$%&()*+.,-/:;<=>?@[]^_`{|}~')];  # no !, ', ", or \
-my $base48900 = [  # PHEAR THIS!
+my $base48900 = [
    @$base90,
    # see printuni.pl for details
    map { chr } (
@@ -199,7 +199,7 @@ my @FLAGS = (
       feature/signatures
       feature/postderef
       feature/postderef_qq
-      XXX:feature/14
+      feature/current_sub
       XXX:feature/15
    ),
 
@@ -339,19 +339,13 @@ my %ALIAS = (
    'feature/5.13'            => 'feature/5.11',
    'feature/5.14'            => 'feature/5.11',
    'feature/5.15'            => [map { "feature/$_" } qw(current_sub evalbytes fc say state switch unicode_eval unicode_strings)],
-   'feature/5.16'            => [map { "feature/$_" } qw(5.15 array_base)],  # array_base's first appearence
-   'feature/5.17'            => 'feature/5.16',
-   'feature/5.18'            => 'feature/5.16',
-   'feature/5.19'            => 'feature/5.16',
-   'feature/5.20'            => 'feature/5.16',
-   'feature/5.21'            => 'feature/5.16',
+   'feature/5.16'            => 'feature/5.15',
+   'feature/5.17'            => 'feature/5.15',
+   'feature/5.18'            => 'feature/5.15',
+   'feature/5.19'            => 'feature/5.15',
+   'feature/5.20'            => 'feature/5.15',
+   'feature/5.21'            => 'feature/5.15',
    feature                   => 'feature/^V',
-
-    "5.10"    => [qw(array_base say state switch)],
-    "5.11"    => [qw(array_base say state switch unicode_strings)],
-    "5.15"    => [qw(current_sub evalbytes fc say state switch unicode_eval unicode_strings)],
-    "all"     => [qw(array_base current_sub evalbytes fc lexical_subs say state switch unicode_eval unicode_strings)],
-    "default" => [qw(array_base)],
 
    'autodie/ipc'     => [qw(MULTI:autodie/ipc autodie/msg autodie/semaphore autodie/shm)],
    'autodie/io'      => [qw(MULTI:autodie/io  autodie/dbm autodie/file autodie/filesys autodie/ipc autodie/socket)],
@@ -1055,7 +1049,7 @@ This feature was borrowed from L<strictures> and tweaked.
       no strict 'refs'
       warnings FATAL => 'all'
       no warnings qw(uninitialized experimental::smartmatch)
-      feature
+      feature '5.10'
       no autovivification qw(fetch exists delete store strict)
       no indirect 'fatal'
       no multidimensional
