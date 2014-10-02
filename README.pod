@@ -287,7 +287,7 @@ This feature was borrowed from L<strictures> and tweaked.
       no strict 'refs'
       warnings FATAL => 'all'
       no warnings qw(uninitialized experimental::smartmatch)
-      feature
+      feature '5.10'
       no autovivification qw(fetch exists delete store strict)
       no indirect 'fatal'
       no multidimensional
@@ -445,6 +445,8 @@ Please report any bugs or feature requests via L<https://github.com/SineSwiper/s
 Brendan Byrd <BBYRD@CPAN.org>
 
 =head1 CONTRIBUTOR
+
+=for stopwords Graham Knop
 
 Graham Knop <haarg@haarg.org>
 
